@@ -1,8 +1,8 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { json } from 'stream/consumers';
+import { rest_authentication } from '../components/auth/dataCript'
 
-interface UserData {
+export interface UserData {
   // Define la estructura de los datos de usuario
   username: string;
   password:string;
@@ -40,8 +40,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (userData: UserData) => {
     // Lógica para iniciar sesión, como enviar una solicitud al servidor para autenticar al usuario
     // Una vez autenticado, guardar el token en el almacenamiento local
-    localStorage.setItem('authToken', JSON.stringify(userData));
-    setUser(userData);
+    //localStorage.setItem('authToken', JSON.stringify(userData));
+    //setUser(userData);
+
+    rest_authentication(userData)
+    
   };
 
   const logout = () => {
