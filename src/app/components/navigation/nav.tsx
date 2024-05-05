@@ -1,12 +1,15 @@
 'use client'
-
 import React, { useState } from 'react';
 import Dropdown from './dropdown';
 import LinkNav from './linkNav';
+import { useAuth } from '../../appContexts/AuthContext';
 
 export default function Navbar() {
+
+  const { user } = useAuth()
+  
   const [isOpen, setIsOpen] = useState(false);
-  const planing = ['Añadir sitios de entrega','Calcular trayecto']
+  const planing = ['Añadir sitios de entrega', 'Calcular trayecto'];
 
   return (
     <nav className="bg-gray-800">
@@ -15,9 +18,13 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <span className="text-white text-lg font-semibold">Logo</span>
           </div>
+
           <div className="flex items-center">
             <div className="block md:hidden">
-              <button onClick={() => setIsOpen(!isOpen)} className="text-gray-300 hover:text-white px-2 py-1 focus:outline-none">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-gray-300 hover:text-white px-2 py-1 focus:outline-none"
+              >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {isOpen ? (
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -29,25 +36,24 @@ export default function Navbar() {
             </div>
 
             {/* Contenedor condicional para mostrar los enlaces de navegación solo en dispositivos móviles */}
-            {isOpen && (
+            {user && isOpen && (
               <div className="md:hidden absolute top-16 left-0 w-full bg-gray-800 z-10">
                 <div className="px-2 pt-2 pb-3 sm:px-3">
-
-                  <Dropdown options={planing} title='Planificador diario' />
-                  <LinkNav href='test'>test</LinkNav>
-                  
+                  <Dropdown options={planing} title="Planificador diario" />
+                  <LinkNav href="test">test</LinkNav>
                 </div>
               </div>
             )}
           </div>
 
           {/* Contenedor condicional para mostrar los enlaces de navegación solo en escritorio */}
-          <div className="hidden md:flex md:items-center">
-
-            <Dropdown options={planing} title='Planificador diario' />
-            <LinkNav href='test'>test</LinkNav>
-
-          </div>
+          {user && (
+            <div className="hidden md:flex md:items-center">
+              <Dropdown options={planing} title="Planificador diario" />
+              <LinkNav href="test">test</LinkNav>
+              <LinkNav href="Logout">Logout</LinkNav>
+            </div>
+          )}
         </div>
       </div>
     </nav>
