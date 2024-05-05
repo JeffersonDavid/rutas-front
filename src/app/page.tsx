@@ -1,6 +1,7 @@
-import Image from "next/image";
+import Middleware from "./components/auth/middleware";
 
 export default function Home() {
-  return ( ''
+  return (
+    <Middleware>Home page</Middleware>
   );
 }
