@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import {appPrettyBorder,appText,appHover} from '../coreStyles/coreStyles'
 
 const Dropdown: React.FC<{ options: string[], title: string }> = ({ options , title }) => {
   const [isOpen, setIsOpen] = useState(false);
   
-  const dropdownBorder = 'border border-sky-500 divide-y divide-slate-700'
-  const dropdownText = 'text-gray-300'
-  const dropDownHover = 'hover:bg-gray-700 hover:text-white'
+  const dropdownBorder = appPrettyBorder
+  const dropdownText = appText
+  const dropDownHover = appHover
 
 
   return (
@@ -15,7 +16,7 @@ const Dropdown: React.FC<{ options: string[], title: string }> = ({ options , ti
         onClick={() => setIsOpen(!isOpen)}
         className={ `${dropdownText} ${dropDownHover} block px-3 py-2 rounded-md text-md ${isOpen ? 'bg-gray-700 text-white' : '' }`}
       >
-        {title}
+        <div className='flex'>{title} <span>&#9660;</span></div>
       </button>
 
       {/* Contenido del dropdown */}
