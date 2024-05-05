@@ -3,16 +3,23 @@ import React, { useState } from 'react';
 import Dropdown from './dropdown';
 import LinkNav from './linkNav';
 import { useAuth } from '../../appContexts/AuthContext';
+import {appPrettyBorder,appText,appHover} from '../coreStyles/coreStyles'
 
 export default function Navbar() {
 
   const { user } = useAuth()
+  const { logout } = useAuth(); 
   
   const [isOpen, setIsOpen] = useState(false);
-  const planing = ['Añadir sitios de entrega', 'Calcular trayecto'];
+ 
+  type NavSkeletonItem = React.ReactNode;
+  const navSkeleton: NavSkeletonItem[] = [
+  <Dropdown key={1} options={['Añadir sitios de entrega', 'Calcular trayecto']} title="Planificador diario" />,
+  <button key={2} onClick={logout} className={`${appText} ${appHover}`}>Logout</button>
+];
 
   return (
-    <nav className="bg-gray-800">
+    <nav className={"bg-gray-800"}>
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
@@ -39,19 +46,22 @@ export default function Navbar() {
             {user && isOpen && (
               <div className="md:hidden absolute top-16 left-0 w-full bg-gray-800 z-10">
                 <div className="px-2 pt-2 pb-3 sm:px-3">
-                  <Dropdown options={planing} title="Planificador diario" />
-                  <LinkNav href="test">test</LinkNav>
+                {navSkeleton.map((item, index) => (
+                  // Renderizar cada elemento de la matriz con su índice como clave
+                  <div key={index}>{item}</div>
+                ))}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Contenedor condicional para mostrar los enlaces de navegación solo en escritorio */}
+          {/* Contenedor condicional para mostrar los enlaces de navegación solo en escritorio <LinkNav href="test">test</LinkNav>*/}
           {user && (
             <div className="hidden md:flex md:items-center">
-              <Dropdown options={planing} title="Planificador diario" />
-              <LinkNav href="test">test</LinkNav>
-              <LinkNav href="Logout">Logout</LinkNav>
+              {navSkeleton.map((item, index) => (
+                  // Renderizar cada elemento de la matriz con su índice como clave
+                  <div key={index}>{item}</div>
+              ))}
             </div>
           )}
         </div>

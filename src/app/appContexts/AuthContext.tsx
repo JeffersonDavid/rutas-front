@@ -1,9 +1,11 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { json } from 'stream/consumers';
 
 interface UserData {
   // Define la estructura de los datos de usuario
   username: string;
+  password:string;
   // Otros datos de usuario si es necesario
 }
 
@@ -27,7 +29,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (token) {
       // Aquí deberías hacer una solicitud al servidor para validar el token y obtener los datos del usuario
       // Por simplicidad, asumiremos que el token es válido y simularemos la sesión del usuario
-      setUser({ username: 'user123' });
+      //setUser({ username: 'user123' });
     }else{
 
       setUser(null);
@@ -38,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (userData: UserData) => {
     // Lógica para iniciar sesión, como enviar una solicitud al servidor para autenticar al usuario
     // Una vez autenticado, guardar el token en el almacenamiento local
-    localStorage.setItem('authToken', 'exampleAuthToken');
+    localStorage.setItem('authToken', JSON.stringify(userData));
     setUser(userData);
   };
 

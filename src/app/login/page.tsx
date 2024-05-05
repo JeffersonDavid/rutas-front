@@ -10,13 +10,10 @@ const Login = () => {
 
   const handleSubmit = (event:any) => {
     event.preventDefault();
-    // Lógica para el envío del formulario de inicio de sesión
     console.log('Usuario:', username);
     console.log('Contraseña:', password);
-
     const userData = { username, password };
     login(userData);
-   
   }
 
   return (
