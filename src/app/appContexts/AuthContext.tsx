@@ -4,7 +4,7 @@ import { rest_authentication } from '../components/auth/dataCript'
 
 export interface UserData {
   // Define la estructura de los datos de usuario
-  username: string;
+  name: string;
   password:string;
   // Otros datos de usuario si es necesario
 }
