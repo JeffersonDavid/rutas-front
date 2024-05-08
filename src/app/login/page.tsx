@@ -8,7 +8,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (event:any) => {
+  const handleSubmit = ( event:any ) => {
     event.preventDefault();
     console.log('Usuario:', username);
     console.log('Contraseña:', password);
