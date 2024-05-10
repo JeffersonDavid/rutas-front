@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { useAuth } from '../appContexts/AuthContext';
+import { redirect } from 'next/navigation';
 
 const Login = () => {
 
@@ -8,9 +9,17 @@ const Login = () => {
   const [name, setname] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const  handleLogin = async () => {
     const userData = { name, password };
-    login(userData);
+    try {
+          await login(userData);
+          
+    } catch (error) {
+
+      // console.log('error capturado en login')
+       // alert('Usuario o contraseña incorrecto');
+
+    }
   }
 
   return (

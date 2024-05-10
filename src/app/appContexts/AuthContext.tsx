@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { rest_authentication } from '../components/auth/dataCript';
-
+import { redirect } from 'next/navigation';
 
 export const storage_key = 'authToken';
 
@@ -68,6 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
             console.error('Authentication failed: Token is null');
             logout()
+            throw new Error('Auth failed');
             
 
         }
@@ -75,6 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Handle authentication errors
         console.error('Error during login:', error);
         logout();
+        throw new Error('Auth failed');
     }
 };
 
