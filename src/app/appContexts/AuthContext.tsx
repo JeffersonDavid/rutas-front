@@ -58,16 +58,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (userData: UserData) => {
     try {
         const token = await rest_authentication(userData);
-        
         // Ensure token is not null before setting it
         if (token !== null) {
+
             localStorage.setItem('authToken', token);
             console.log(token)
             setAuthToken(token);
-        } else {
 
+        } else {
+          
             console.error('Authentication failed: Token is null');
             setAuthToken(null);
+
         }
     } catch (error) {
         // Handle authentication errors
