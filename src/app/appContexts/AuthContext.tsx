@@ -1,69 +1,100 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { rest_authentication } from '../components/auth/dataCript'
+import { rest_authentication } from '../components/auth/dataCript';
 
+// Define interfaces
 export interface UserData {
-  // Define la estructura de los datos de usuario
   name: string;
-  password:string;
-  // Otros datos de usuario si es necesario
+  password: string;
 }
 
+export interface AuthToken {
+  authToken: string;
+}
+
+// Define context type
 interface AuthContextType {
+  authToken: string | null;
   user: UserData | null;
-  login: (userData: UserData) => void;
+  login: (userData: UserData) => Promise<void>;
   logout: () => void;
 }
 
+// Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// AuthProvider Props
 interface AuthProviderProps {
   children: ReactNode;
 }
 
+// AuthProvider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      // Aquí deberías hacer una solicitud al servidor para validar el token y obtener los datos del usuario
-      // Por simplicidad, asumiremos que el token es válido y simularemos la sesión del usuario
-      //setUser({ username: 'user123' });
-    }else{
-
-      setUser(null);
-    }
+    initializeAuth();
 
   }, []);
 
-  const login = (userData: UserData) => {
-    // Lógica para iniciar sesión, como enviar una solicitud al servidor para autenticar al usuario
-    // Una vez autenticado, guardar el token en el almacenamiento local
-    //localStorage.setItem('authToken', JSON.stringify(userData));
-    //setUser(userData);
+  // Initialize authentication state from local storage
+  const initializeAuth = () => {
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
 
-    rest_authentication(userData)
-    
+      setAuthToken(storedToken);
+      
+    }
+    else
+    {
+      setAuthToken(null)
+      localStorage.removeItem('authToken');
+      
+    }
   };
 
+  // Login function
+  const login = async (userData: UserData) => {
+    try {
+        const token = await rest_authentication(userData);
+        
+        // Ensure token is not null before setting it
+        if (token !== null) {
+            localStorage.setItem('authToken', token);
+            console.log(token)
+            setAuthToken(token);
+        } else {
+
+            console.error('Authentication failed: Token is null');
+            setAuthToken(null);
+        }
+    } catch (error) {
+        // Handle authentication errors
+        console.error('Error during login:', error);
+        setAuthToken(null);
+    }
+};
+
+  // Logout function
   const logout = () => {
-    // Lógica para cerrar sesión, como eliminar el token de autenticación almacenado
     localStorage.removeItem('authToken');
-    setUser(null);
+    setAuthToken(null);
   };
 
+  // Provide context value to children
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ authToken, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+// Custom hook to consume AuthContext
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };

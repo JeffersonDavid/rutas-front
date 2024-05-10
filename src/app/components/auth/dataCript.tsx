@@ -1,22 +1,27 @@
 import { UserData } from '../../appContexts/AuthContext';
 
-
 interface JsonRequest {
     data: string;
 }
 
-
-export const rest_authentication = async (userData: UserData): Promise<string> => {
-
-    const data = JSON.stringify(userData);
-    const dataBase64 = btoa(data);
-    const rest_token = fetchData( {data:dataBase64} )
-
-    console.log('auth completed')
-    console.log(await rest_token)
-
-    return '';
+export const rest_authentication = async (userData: UserData): Promise<string | null> => {
+    try {
+        const data = JSON.stringify(userData);
+        const dataBase64 = btoa(data);
+        const restToken = await fetchData({ data: dataBase64 });
+        
+        if (restToken && restToken.token) {
+            return restToken.token;
+        } else {
+            console.error('Token not found in response:', restToken);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error during authentication:', error);
+        return null;
+    }
 };
+
 
 
 const fetchData = async ( data:JsonRequest ) => {
@@ -24,7 +29,6 @@ const fetchData = async ( data:JsonRequest ) => {
     try {
 
         const rawData = data;
-
         const response = await fetch('http://localhost:8080/api/login', {
             method: 'POST',
             headers: {
@@ -38,10 +42,15 @@ const fetchData = async ( data:JsonRequest ) => {
         }
 
         const responseData = await response.json();
-        return responseData
+        if(responseData.token){
+            return responseData
+        }else{
+            return null;
+        }
 
     } catch (error:any) {
         console.error('Error:', error.message);
+        return null
     }
 };
 

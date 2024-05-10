@@ -7,7 +7,8 @@ import {appPrettyBorder,appText,appHover} from '../coreStyles/coreStyles'
 
 export default function Navbar() {
 
-  const { user } = useAuth()
+  const { authToken } = useAuth()
+
   const { logout } = useAuth(); 
   
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +44,7 @@ export default function Navbar() {
             </div>
 
             {/* Contenedor condicional para mostrar los enlaces de navegación solo en dispositivos móviles */}
-            {user && isOpen && (
+            {authToken && isOpen && (
               <div className="md:hidden absolute top-16 left-0 w-full bg-gray-800 z-10">
                 <div className="px-2 pt-2 pb-3 sm:px-3">
                 {navSkeleton.map((item, index) => (
@@ -56,7 +57,7 @@ export default function Navbar() {
           </div>
 
           {/* Contenedor condicional para mostrar los enlaces de navegación solo en escritorio <LinkNav href="test">test</LinkNav>*/}
-          {user && (
+          {authToken && (
             <div className="hidden md:flex md:items-center">
               {navSkeleton.map((item, index) => (
                   // Renderizar cada elemento de la matriz con su índice como clave
