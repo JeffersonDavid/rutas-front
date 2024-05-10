@@ -1,4 +1,4 @@
-import Middleware from "./components/auth/middleware";
+import Middleware from "./components/auth/pageMiddleware";
 
 export default function Home() {
   return (

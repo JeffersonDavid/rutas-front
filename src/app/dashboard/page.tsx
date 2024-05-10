@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import Middleware from "../components/auth/middleware";
+import Middleware from "../components/auth/pageMiddleware";
 
 const Dashboard = () => {
   return (

@@ -2,6 +2,9 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { rest_authentication } from '../components/auth/dataCript';
 
+
+export const storage_key = 'authToken';
+
 // Define interfaces
 export interface UserData {
   name: string;
@@ -40,17 +43,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Initialize authentication state from local storage
   const initializeAuth = () => {
-    const storedToken = localStorage.getItem('authToken');
+    const storedToken = localStorage.getItem(storage_key);
     if (storedToken) {
-
       setAuthToken(storedToken);
-      
     }
     else
     {
-      setAuthToken(null)
-      localStorage.removeItem('authToken');
-      
+      logout();
     }
   };
 
@@ -61,26 +60,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Ensure token is not null before setting it
         if (token !== null) {
 
-            localStorage.setItem('authToken', token);
+            localStorage.setItem(storage_key, token);
             console.log(token)
             setAuthToken(token);
 
         } else {
           
             console.error('Authentication failed: Token is null');
-            setAuthToken(null);
+            logout()
+            
 
         }
     } catch (error) {
         // Handle authentication errors
         console.error('Error during login:', error);
-        setAuthToken(null);
+        logout();
     }
 };
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem(storage_key);
     setAuthToken(null);
   };
 

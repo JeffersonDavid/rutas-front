@@ -1,5 +1,4 @@
 'use client'
-import Middleware from "../components/auth/middleware";
 import React, { useState } from 'react';
 import { useAuth } from '../appContexts/AuthContext';
 
@@ -16,7 +15,6 @@ const Login = () => {
 
   return (
     <>
-      <Middleware>
         <div className="min-h-screen flex items-center justify-center bg-gray-900">
           <div className="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-semibold text-gray-200 mb-6">Iniciar sesión</h2>
@@ -31,7 +29,6 @@ const Login = () => {
             <button type="button" onClick={handleLogin} className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring focus:ring-indigo-300">Iniciar sesión</button>
           </div>
         </div>
-      </Middleware>
     </>
   );
 };
