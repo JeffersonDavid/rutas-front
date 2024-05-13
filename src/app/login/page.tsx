@@ -9,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
 
+
   const handleLogin = async () => {
     const userData = { name, password };
 
@@ -16,7 +17,6 @@ const Login = () => {
       await login(userData);
     } catch (error) { 
       setAuthError(true);
-      // Lógica adicional en caso de error
     }
   };
 
@@ -28,9 +28,9 @@ const Login = () => {
     <>
       {authError && (
         <CustomAlert 
-          type='success'
-          title="Error" 
-          message="Something went wrong. Please try again." 
+          type='error'
+          title="Error de autentificacion" 
+          message="El usuario o contraseña introducido es incorrecto, por favor, introduzca unas credenciales válidas." 
           onClose={handleCloseAlert} // Agrega un manejador para cerrar el alert
         />
       )}
