@@ -4,7 +4,6 @@ import { useAuth } from '../appContexts/AuthContext';
 import CustomAlert from '../components/alerts/customAlert';
 import { useRouter,useParams } from 'next/navigation'
 import { useLoader } from '../appContexts/AppLoader';
-import { redirect } from 'next/navigation';
 
 const Login = () => {
 
@@ -30,19 +29,19 @@ const Login = () => {
   }, [authError,isLoading])
   
   const handleLogin = async () => {
+
     const userData = { name, password };
-    try {
 
-      setIsLoading(true);
-      await login(userData);
-      localStorage.removeItem(loginSignal);
-      router.push('/dashboard')
-
-    } catch (error) {
-      setIsLoading(false);
-    } finally {
-      localStorage.setItem(loginSignal, 'failed');
-    }
+      try {
+            setIsLoading(true);
+            await login(userData);
+            localStorage.removeItem(loginSignal);
+            router.push('/dashboard')
+      } catch (error) {
+            setIsLoading(false);
+      } finally {
+            localStorage.setItem(loginSignal, 'failed');
+      }
     
   };
 

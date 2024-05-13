@@ -1,9 +1,8 @@
 'use client'
 import React, { useState } from 'react';
 import Dropdown from './dropdown';
-import LinkNav from './linkNav';
 import { useAuth } from '../../appContexts/AuthContext';
-import {appPrettyBorder,appText,appHover} from '../coreStyles/coreStyles'
+
 
 export default function Navbar() {
 
@@ -15,16 +14,20 @@ export default function Navbar() {
  
   type NavSkeletonItem = React.ReactNode;
   const navSkeleton: NavSkeletonItem[] = [
-  <Dropdown key={1} options={['Añadir sitios de entrega', 'Calcular trayecto']} title="Planificador diario" />,
-  <button key={2} onClick={logout} className={`${appText} ${appHover}`}>Logout</button>
-];
+    <Dropdown key={1} options= {
+      [
+      <a href='#' className='linkmenu w-full text-justify'> Mi perfil </a>,
+      <button onClick={logout} className='w-full text-justify'>Logout</button>
+      ]
+    } title={'Mi perfil'} />,
+  ];
 
   return (
     <nav className={"bg-gray-800"}>
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <span className="text-white text-lg font-semibold">Logo</span>
+            <span className="text-white text-lg font-semibold">{'Rutas.com'}</span>
           </div>
 
           <div className="flex items-center">

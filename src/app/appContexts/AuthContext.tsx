@@ -82,7 +82,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem(storage_key);
+    localStorage.clear();
     setAuthToken(null);
   };
 

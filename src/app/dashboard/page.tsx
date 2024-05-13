@@ -1,13 +1,11 @@
-import { redirect } from 'next/navigation'
+
 import Middleware from "../components/auth/pageMiddleware";
 
 const Dashboard = () => {
   return (
     <>
       <Middleware>
-
-      <h1>Dashboard</h1>
-      
+          <h1>Dashboard</h1>
       </Middleware>
     </>
   );

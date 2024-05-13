@@ -79,3 +79,12 @@ nav{
 }
 
 /*************/
+
+.linkmenu{
+  display: block !important;
+}
+
+
+.nav2{
+  border: 1pt solid #373f54;
+}
