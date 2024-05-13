@@ -28,7 +28,7 @@ const Login = () => {
     <>
       {authError && (
         <CustomAlert 
-          type='error'
+          type='success'
           title="Error" 
           message="Something went wrong. Please try again." 
           onClose={handleCloseAlert} // Agrega un manejador para cerrar el alert

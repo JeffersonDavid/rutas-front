@@ -45,11 +45,11 @@ nav{
 
 /* custom alert effects and styles */
 .customAlert {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-top: 2%;
-  margin-right: 1%;
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  margin-top: 2% !important;
+  margin-right: 1% !important;
 }
 
 .fade-in {
