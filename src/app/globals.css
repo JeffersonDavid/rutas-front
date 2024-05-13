@@ -31,3 +31,51 @@ body {
     text-wrap: balance;
   }
 }
+
+
+
+
+nav{
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+
+
+/* custom alert effects and styles */
+.customAlert {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-top: 2%;
+  margin-right: 1%;
+}
+
+.fade-in {
+  animation-name: fade-in; /* Nombre de la animación */
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-out {
+  animation-name: fade-out; /* Nombre de la animación */
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/*************/

@@ -21,9 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body className={inter.className}>
+      <body className={`${inter.className}`}>
           <NavComponent/>
-          {children}
+          <div className=" min-h-screen flex items-center justify-center bg-gray-900">
+             {children}
+          </div>
           </body>
       </AuthProvider>
     </html>
