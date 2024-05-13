@@ -1,23 +1,46 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../appContexts/AuthContext';
 import CustomAlert from '../components/alerts/customAlert';
+import { useRouter,useParams } from 'next/navigation'
+import { useLoader } from '../appContexts/AppLoader';
 
 const Login = () => {
+
   const { login } = useAuth(); 
   const [name, setname] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
+  const router = useRouter()
+  const loginSignal = 'loginstate'
+  const { isLoading, setIsLoading } = useLoader();
 
+  useEffect(() => {
+  
+    if (!isLoading) {
+      const seed = localStorage.getItem(loginSignal);
+      if (seed) {
+        setAuthError(true);
+        localStorage.removeItem(loginSignal);
+      }
+    }
 
+  }, [authError,isLoading])
+  
   const handleLogin = async () => {
     const userData = { name, password };
-
     try {
+      
+      setIsLoading(true);
       await login(userData);
-    } catch (error) { 
-      setAuthError(true);
+      localStorage.removeItem(loginSignal);
+
+    } catch (error) {
+      setIsLoading(false);
+    } finally {
+      localStorage.setItem(loginSignal, 'failed');
     }
+    
   };
 
   const handleCloseAlert = () => {

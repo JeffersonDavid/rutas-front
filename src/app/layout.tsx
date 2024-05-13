@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavComponent from './components/navigation/nav'
 import { AuthProvider } from "./appContexts/AuthContext";
+import { LoaderProvider } from "./appContexts/AppLoader";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,13 +21,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
       <AuthProvider>
-      <body className={`${inter.className}`}>
-          <NavComponent/>
-          <div className=" min-h-screen flex items-center justify-center bg-gray-900">
-             {children}
-          </div>
-          </body>
+            <body className={`${inter.className}`}>
+              <LoaderProvider>
+                <NavComponent/>
+                <div className=" min-h-screen flex items-center justify-center bg-gray-900">
+                  {children}
+                </div>
+              </LoaderProvider>
+            </body>
       </AuthProvider>
     </html>
   );
