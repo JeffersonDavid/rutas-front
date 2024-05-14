@@ -14,6 +14,7 @@ export default function Navbar() {
  
   type NavSkeletonItem = React.ReactNode;
   const navSkeleton: NavSkeletonItem[] = [
+    <a href='#' className='linkmenu w-full text-justify block px-3 py-2 rounded-md text-md'> Generar una nueva ruta </a>,
     <Dropdown key={1} options= {
       [
       <a href='#' className='linkmenu w-full text-justify'> Mi perfil </a>,

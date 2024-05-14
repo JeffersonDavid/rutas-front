@@ -1,11 +1,15 @@
 
 import Middleware from "../components/auth/pageMiddleware";
+import ChessBoard from "../core/chessComponets/ChessBoard";
 
 const Dashboard = () => {
   return (
     <>
       <Middleware>
-          <h1>Dashboard</h1>
+          <div>
+              <h1>Tablero de Ajedrez</h1>
+              <ChessBoard />
+          </div>
       </Middleware>
     </>
   );

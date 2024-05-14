@@ -27,7 +27,6 @@ export default function RootLayout({
             <body className={`${inter.className}`}>
               <LoaderProvider>
                 <NavComponent/>
-                  <VerticalNavComponent/>
                   <div className=" min-h-screen flex items-center justify-center bg-gray-900">
                     {children}
                   </div>
