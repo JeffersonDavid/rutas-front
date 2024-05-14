@@ -2,7 +2,6 @@
 // Importa los módulos necesarios
 import React, { useState } from 'react';
 import Piece from '../piece/piece'; // Importa el componente Piece
-
 import { IPiece, createPiece } from '../contracts/piece'; 
 
 // Define las piezas blancas
@@ -36,13 +35,20 @@ const Chessboard: React.FC = () => {
   ];
 
   const [board, setBoard] = useState<(IPiece | null)[][]>(startingBoard);
-  const [selectedPiece, setSelectedPiece] = useState<{ row: number, col: number } | null>(null);
+  //const [selectedPiece, setSelectedPiece] = useState<{ row: number, col: number } | null>(null);
 
   // Función para manejar el clic en una casilla
-  const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
-    
-  };
+const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
+  // Verificar si hay una pieza en la casilla seleccionada
+  if (piece !== null) {
+    // Actualizar las coordenadas y el estado seleccionado de la pieza
+    piece.chessPiece.coords = { row, col };
+    piece.chessPiece.selected = true;
 
+    // Imprimir la pieza seleccionada en la consola para verificar los cambios
+    console.log(piece);
+  }
+};
   // Renderizar el tablero y las piezas
   return (
     <div className="flex justify-center items-center h-screen">
@@ -60,7 +66,7 @@ const Chessboard: React.FC = () => {
               >
                 {/* Renderizar la pieza si existe */}
                 {piece !== null && (
-                  <Piece chessPiece={piece} />
+                  <Piece chessPiece={ piece } />
                 )}
               </div>
             ))}
