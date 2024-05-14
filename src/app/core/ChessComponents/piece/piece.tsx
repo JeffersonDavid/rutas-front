@@ -2,20 +2,19 @@ import React from 'react';
 import { IPiece } from '../contracts/piece';
 
 const Piece: React.FC<{ chessPiece: IPiece }> = ({ chessPiece }) => {
-
-
-  const symbol = chessPiece.chessPiece.symbol
   const color = chessPiece.chessPiece.color;
   const pieceColor = color === 'white' ? 'white' : 'black';
 
-  console.log('clicked piece')
-  console.log(chessPiece)
+  // Verifica si la pieza está seleccionada
+  const isSelected = chessPiece.chessPiece.selected;
+  const text = isSelected ? 'sel' : 'no sel'
 
-return (
-  <div className={`w-full h-full flex justify-center items-center`} style={{ color: pieceColor }}>
-    {symbol}
-  </div>
-);
-}
+  return (
+    <div className={`w-full h-full flex justify-center items-center`} style={{ color: pieceColor }}>
+      {chessPiece.chessPiece.symbol}
+      {text}
+    </div>
+  );
+};
 
 export default Piece;

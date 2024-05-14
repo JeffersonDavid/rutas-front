@@ -35,20 +35,40 @@ const Chessboard: React.FC = () => {
   ];
 
   const [board, setBoard] = useState<(IPiece | null)[][]>(startingBoard);
+
   //const [selectedPiece, setSelectedPiece] = useState<{ row: number, col: number } | null>(null);
 
   // Función para manejar el clic en una casilla
-const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
-  // Verificar si hay una pieza en la casilla seleccionada
-  if (piece !== null) {
-    // Actualizar las coordenadas y el estado seleccionado de la pieza
-    piece.chessPiece.coords = { row, col };
-    piece.chessPiece.selected = true;
+  const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
+    // Hacer una copia del tablero actual
+    const newBoard: (IPiece | null)[][] = [...board];
+  
+    // Verificar si hay una pieza en la casilla seleccionada
+    if (piece !== null) {
+      
+      // Verifica si la pieza está seleccionada actualmente
+        const isSelected = piece.chessPiece.selected;
 
-    // Imprimir la pieza seleccionada en la consola para verificar los cambios
-    console.log(piece);
-  }
-};
+        // Calcula el nuevo estado seleccionado
+        const newSelectedState = !isSelected;
+
+        // Crea una copia de la pieza actualizada con el nuevo estado seleccionado
+        const updatedPiece: IPiece = {
+          ...piece,
+          chessPiece: {
+            ...piece.chessPiece,
+            selected: newSelectedState
+          }
+        };
+          
+      // Actualizar la casilla seleccionada en la nueva matriz del tablero
+      newBoard[row][col] = updatedPiece;
+    }
+  
+    // Actualizar el estado del tablero con la nueva matriz que refleja los cambios
+    setBoard(newBoard);
+  };
+  
   // Renderizar el tablero y las piezas
   return (
     <div className="flex justify-center items-center h-screen">

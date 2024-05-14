@@ -3,7 +3,7 @@ export interface BasePiece {
     symbol: string;
     name: string;
     description: string;
-    selected?: boolean; // El atributo selected es opcional
+    selected: boolean; // El atributo selected es opcional
     color: string;
     coords: { 
       row: number | null;
