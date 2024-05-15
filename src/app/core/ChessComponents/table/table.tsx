@@ -38,36 +38,53 @@ const Chessboard: React.FC = () => {
 
   //const [selectedPiece, setSelectedPiece] = useState<{ row: number, col: number } | null>(null);
 
-  // Función para manejar el clic en una casilla
-  const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
-    // Hacer una copia del tablero actual
-    const newBoard: (IPiece | null)[][] = [...board];
-  
-    // Verificar si hay una pieza en la casilla seleccionada
-    if (piece !== null) {
-      
-      // Verifica si la pieza está seleccionada actualmente
-        const isSelected = piece.chessPiece.selected;
 
-        // Calcula el nuevo estado seleccionado
-        const newSelectedState = !isSelected;
+// Función para manejar el clic en una casilla
+const handleSquareClick = (row: number, col: number, piece: IPiece | null): void => {
 
-        // Crea una copia de la pieza actualizada con el nuevo estado seleccionado
-        const updatedPiece: IPiece = {
-          ...piece,
-          chessPiece: {
-            ...piece.chessPiece,
-            selected: newSelectedState
+  const seed_ = piece
+  // Hacer una copia del tablero actual
+  const newBoard: (IPiece | null)[][] = [...board];
+
+  // Verificar si hay una pieza en la casilla seleccionada
+  if (piece !== null) {
+    // Verifica si la pieza está seleccionada actualmente
+    const isSelected = piece.chessPiece.selected;
+
+    // Calcula el nuevo estado seleccionado
+    const newSelectedState = !isSelected;
+
+    // Crea una copia de la pieza actualizada con el nuevo estado seleccionado y las nuevas coordenadas
+    const updatedPiece: IPiece = {
+      ...piece,
+      chessPiece: {
+        ...piece.chessPiece,
+        selected: newSelectedState,
+        coords: {
+          row: row,
+          col: col
+        }
+      }
+    };
+
+    // Actualizar la casilla seleccionada en la nueva matriz del tablero
+    newBoard[row][col] = updatedPiece;
+    newBoard.forEach(row => {
+      row.forEach(col => {
+        if(col?.chessPiece.selected){
+          if( col.chessPiece.uid != seed_?.chessPiece.uid ){
+               col.chessPiece.selected = false
           }
-        };
-          
-      // Actualizar la casilla seleccionada en la nueva matriz del tablero
-      newBoard[row][col] = updatedPiece;
-    }
+        }
+      });
+    });
+
+  }
   
-    // Actualizar el estado del tablero con la nueva matriz que refleja los cambios
-    setBoard(newBoard);
-  };
+  setBoard(newBoard);
+};
+
+
   
   // Renderizar el tablero y las piezas
   return (
