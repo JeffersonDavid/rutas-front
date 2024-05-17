@@ -69,18 +69,52 @@ const handleSquareClick = (row: number, col: number, piece: IPiece | null): void
 
     // Actualizar la casilla seleccionada en la nueva matriz del tablero
     newBoard[row][col] = updatedPiece;
+
     newBoard.forEach(row => {
+    
       row.forEach(col => {
+
         if(col?.chessPiece.selected){
+         
           if( col.chessPiece.uid != seed_?.chessPiece.uid ){
+
                col.chessPiece.selected = false
+
           }
         }
+
       });
+      
     });
 
+    /*
+    // Filtrar todas las piezas seleccionadas
+    const selectedPieces = newBoard.flat().filter(piece => piece !== null && piece.chessPiece.selected);
+
+    if (selectedPieces.length > 1) {
+      // Encuentra la última pieza seleccionada
+      const lastSelectedPiece = selectedPieces[selectedPieces.length - 1];
+
+      console.log(lastSelectedPiece);
+
+      // Actualiza el tablero
+      newBoard.forEach(row => {
+        row.forEach(col => {
+          if (col?.chessPiece === lastSelectedPiece?.chessPiece) {
+            // Desmarca la última pieza seleccionada
+            col!.chessPiece.selected = false;
+          }
+        });
+      });
+
+      selectedPieces.pop()
+    }
+    
+    */
+   
   }
-  
+
+  // Actualizar el estado del tablero con la nueva matriz que refleja los cambios
   setBoard(newBoard);
 };
 

@@ -14,7 +14,7 @@ export default function Navbar() {
  
   type NavSkeletonItem = React.ReactNode;
   const navSkeleton: NavSkeletonItem[] = [
-    <a href='#' className='linkmenu w-full text-justify block px-3 py-2 rounded-md text-md'> Generar una nueva ruta </a>,
+    <a href='#' className='linkmenu w-full text-justify block px-3 py-2 rounded-md text-md'>.. </a>,
     <Dropdown key={1} options= {
       [
       <a href='#' className='linkmenu w-full text-justify'> Mi perfil </a>,
@@ -25,10 +25,10 @@ export default function Navbar() {
 
   return (
     <nav className={"bg-gray-800"}>
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 relative">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 re5lative">
         <div className="flex items-center justify-between h-16">
           <div className="flex-shrink-0">
-            <span className="text-white text-lg font-semibold">{'Rutas.com'}</span>
+            <span className="text-white text-lg font-semibold">{''}</span>
           </div>
 
           <div className="flex items-center">

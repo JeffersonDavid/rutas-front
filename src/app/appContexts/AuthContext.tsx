@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { rest_authentication } from '../components/auth/dataCript';
-import { redirect } from 'next/navigation';
+
 
 export const storage_key = 'authToken';
 
