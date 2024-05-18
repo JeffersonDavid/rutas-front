@@ -6,8 +6,7 @@ const Dashboard = () => {
   return (
     <>
       <Middleware>
-          <div className="mt-[10vh]">            
-          </div>
+          <div className="mt-[10vh]">  </div>
       </Middleware>
     </>
   );

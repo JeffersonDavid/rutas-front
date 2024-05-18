@@ -1,6 +1,6 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { rest_authentication } from '../components/auth/dataCript';
+import { rest_authentication, rest_logout } from '../components/auth/dataCript';
 
 
 export const storage_key = 'authToken';
@@ -56,12 +56,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Login function
   const login = async (userData: UserData) => {
     try {
-        const token = await rest_authentication(userData);
+        let token = await rest_authentication(userData);
         // Ensure token is not null before setting it
-        if (token !== null) {
+        if (token) {
 
             localStorage.setItem(storage_key, token);
-            console.log(token)
             setAuthToken(token);
 
         } else {
@@ -80,10 +79,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
 };
 
-  // Logout function
-  const logout = () => {
-    localStorage.clear();
-    setAuthToken(null);
+const logout = async () => {
+
+  try {
+
+    const token = localStorage.getItem(storage_key);
+
+    if (!token) {
+      console.error('No token found in local storage');
+      return;
+    }
+
+    const res = await rest_logout(token);
+
+    if (res.status === 200) {
+      console.log('Logged out successfully');
+        // Limpiar almacenamiento local y estado de autenticación
+        localStorage.clear();
+        setAuthToken(null);
+
+    } else {
+      console.error('Failed to logout:', res.error || 'Unknown error');
+    }
+
+  } catch (error: any) {
+    console.error('Error during logout:', error.message || error);
+  }
+  
   };
 
   // Provide context value to children
