@@ -16,7 +16,7 @@ interface ApiResponse {
     try {
       const data = JSON.stringify(userData);
       const dataBase64 = btoa(data);
-      const restToken = await fetchData('http://localhost:8080/api/login', { data: dataBase64 });
+      const restToken = await fetchData('http://localhost/api/login', { data: dataBase64 });
   
       if (restToken.status === 200 && restToken.body && restToken.body.token) {
         return restToken.body.token;
@@ -33,7 +33,7 @@ interface ApiResponse {
 
   export const rest_logout = async (token: string): Promise<ApiResponse> => {
     try {
-      const restToken = await fetchData('http://localhost:8080/api/logout', { data: null }, token);
+      const restToken = await fetchData('http://localhost/api/logout', { data: null }, token);
   
       if (restToken.status !== 200) {
         throw new Error('Logout failed');

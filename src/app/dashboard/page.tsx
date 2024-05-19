@@ -1,12 +1,13 @@
 
 import Middleware from "../components/auth/pageMiddleware";
-import User from "../components/sockets/user";
+import Socket from "../components/sockets/conn";
 
 const Dashboard = () => {
   return (
     <>
       <Middleware>
           <div className="mt-[10vh]">  </div>
+          <Socket></Socket>
       </Middleware>
     </>
   );
