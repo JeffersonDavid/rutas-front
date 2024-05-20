@@ -1,64 +1,49 @@
 'use client'
 import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 
-const WebSocketComponent = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [ws, setWs] = useState(null);
-
+const UserConnection = () => {
+  
   useEffect(() => {
-    // Crear una nueva conexión WebSocket
-    const socket = new WebSocket('ws://localhost:4000/ws');
+    // Crear una nueva conexión socket.io
+    const socket = io('http://localhost:4000');
 
     // Manejar la conexión abierta
-    socket.onopen = () => {
+    socket.on('connect', () => {
+
       console.log('Connected to the WebSocket server');
-      socket.send('Hello Server!');
-    };
+      socket.emit('notifyToServer', 'Hello Server!');
+
+    });
 
     // Manejar los mensajes recibidos
-    socket.onmessage = (event) => {
-      console.log('Message from server:', event.data);
-      setMessages((prevMessages) => [...prevMessages, event.data]);
-    };
+    socket.on('notifyToClient', (message: string) => {
+
+      console.log('Message from server:', message);
+
+
+    });
 
     // Manejar la desconexión
-    socket.onclose = () => {
-      console.log('Disconnected from the WebSocket server');
-    };
+    socket.on('disconnect', () => {
 
-    // Guardar la conexión WebSocket en el estado
-    setWs(socket);
+      console.log('Disconnected from the WebSocket server');
+
+    });
+
 
     // Limpiar la conexión cuando el componente se desmonte
     return () => {
-      socket.close();
+      socket.disconnect();
     };
   }, []);
 
-  const sendMessage = () => {
-    if (ws) {
-      ws.send(input);
-      setInput('');
-    }
-  };
 
   return (
     <div>
-      <h1>WebSocket Chat</h1>
-      <div>
-        {messages.map((msg, index) => (
-          <p key={index}>{msg}</p>
-        ))}
-      </div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button onClick={sendMessage}>Send</button>
+      <h1>WebSocket Client</h1>
     </div>
   );
 };
 
-export default WebSocketComponent;
+export default UserConnection;
