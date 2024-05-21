@@ -1,10 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from '../../appContexts/AuthContext';
 
 interface AuthData {
-  token: string;
+  token: string | null;
 }
 
 interface PayloadData {
@@ -16,12 +16,9 @@ interface Data {
   payload: PayloadData;
 }
 
-
+// Notifica el estado en tiempo real de un usuario
 const UserConnection = () => {
-
-  const [message, setMessage] = useState<string>('');
-  
-  const { authToken } = useAuth()
+  const { authToken } = useAuth();
 
   useEffect(() => {
     // Crear una nueva conexión socket.io
@@ -29,18 +26,14 @@ const UserConnection = () => {
 
     // Manejar la conexión abierta
     socket.on('connect', () => {
-
       console.log('Connected to the WebSocket server');
-      const data = { auth:{token:authToken} , payload:{ state :1 } }
-      socket.emit('notifyStateToServer', JSON.stringify(data));
-
+      const data: Data = { auth: { token: authToken }, payload: { state: 1 } };
+      socket.emit('setUserState', JSON.stringify(data));
     });
 
     // Manejar los mensajes recibidos
-    socket.on('notifyStateToServer', (message: string) => {
-
+    socket.on('setUserState', (message: string) => {
       console.log('Message from server:', message);
-      setMessage(message);
     });
 
     // Manejar errores de conexión
@@ -57,14 +50,10 @@ const UserConnection = () => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [authToken]); // Añadimos authToken como dependencia
 
-  return (
-    <div>
-      <h1>WebSocket Client</h1>
-      <p>Message from server: {'message'}</p>
-    </div>
-  );
+  // El componente no retorna ningún JSX
+  return null;
 };
 
 export default UserConnection;

@@ -12,6 +12,7 @@ const Middleware: React.FC<MiddlewareProps> = ({ children }) => {
 
   const pathname = usePathname();
   const { authToken } = useAuth();
+  if(pathname != '/login')
   children = authToken ? children : null
   return <> <RouteMiddleware> {children} </RouteMiddleware>  </>
 };

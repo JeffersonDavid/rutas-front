@@ -1,13 +1,11 @@
-
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import NavComponent from './components/navigation/nav'
+import NavComponent from './components/navigation/nav';
 import { AuthProvider } from "./appContexts/AuthContext";
 import { LoaderProvider } from "./appContexts/AppLoader";
 import CustomSidebar from "./components/navigation/verticalNav";
-
-
+import Middleware from "./components/auth/pageMiddleware";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,17 +21,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-
       <AuthProvider>
-            <body className={`${inter.className}`}>
-              <LoaderProvider>
-                <NavComponent/>
-                 <CustomSidebar/>
-                  <div className=" min-h-screen flex items-center justify-center bg-gray-900">
-                    {children}
-                  </div>
-              </LoaderProvider>
-            </body>
+        <body className={`${inter.className}`}>
+            <LoaderProvider>
+                <Middleware>
+                    <NavComponent />
+                    <CustomSidebar />
+                    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+                      {children}
+                    </div>
+                </Middleware>
+            </LoaderProvider>
+        </body>
       </AuthProvider>
     </html>
   );
