@@ -1,6 +1,6 @@
 
 import Middleware from "../components/auth/pageMiddleware";
-import UserConnection from "../components/sockets/conn";
+import UserConnection from "../components/sockets/users/setUserState";
 
 const Dashboard = () => {
   
