@@ -27,9 +27,14 @@ const UserConnection = () => {
     // Manejar la conexión abierta
     socket.on('connect', () => {
       console.log('Connected to the WebSocket server');
-      const data: Data = { auth: { token: authToken }, payload: { state: 1 } };
-      socket.emit('setUserState', JSON.stringify(data));
+      socket.emit('setUserState', authToken);
     });
+
+    socket.on('setUserState', (message) => {
+        
+      console.log(message)
+    });
+
     // Limpiar la conexión cuando el componente se desmonte
     return () => {
       socket.disconnect();
