@@ -1,35 +1,97 @@
-'use client'
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import { useAuth } from '../../appContexts/AuthContext';
+import {
+  FaTh,
+  FaPalette,
+  FaPenNib,
+  FaShapes,
+  FaToggleOn,
+  FaWpforms,
+  FaStar,
+  FaBell,
+  FaThLarge,
+  FaCalendarAlt,
+  FaChess,
+  FaBars
+} from 'react-icons/fa';
 
-export default function VerticalNavComponent(){
+export default function VerticalNavComponent() {
+  const { authToken } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const { authToken } = useAuth()
+  const toggleMenu = () => {
+    setIsCollapsed(!isCollapsed);
+  };
 
   return (
     authToken && (
-      <nav className="nav2 bg-gray-800 w-64 h-screen py-4 px-2 flex flex-col justify-between">
+      <nav className={`bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} h-screen py-4 px-2 flex flex-col justify-between transition-all duration-300 border-r border-gray-700`}>
         <div>
-          {/* Logo o título del menú */}
-          <div className='border-b border-xs border-gray-700 w-full'>
-            <h1 className="text-white text-xl font-bold mb-4">chess.com</h1>
+          <div className='flex justify-between items-center px-2'>
+            <span className={`text-white text-2xl font-semibold ${isCollapsed ? 'hidden' : 'block'}`}>chess.com</span>
+            <button onClick={toggleMenu} className="text-white">
+              <FaBars />
+            </button>
           </div>
           
-          {/* Enlaces del menú */}
-          <ul className="space-y-2">
-            <li>
-              
+          <ul className="mt-4 space-y-2">
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaTh className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Dashboard</span>
+            </li>
+            <div className="mt-6 text-xs text-gray-400 uppercase px-2">Theme</div>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaPalette className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Colors</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaPenNib className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Typography</span>
+            </li>
+            <div className="mt-6 text-xs text-gray-400 uppercase px-2">Components</div>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaShapes className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Base</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaToggleOn className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Buttons</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaWpforms className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Forms</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaStar className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Icons</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaBell className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Notifications</span>
+            </li>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaThLarge className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Widgets</span>
+              {!isCollapsed && <span className="bg-blue-500 text-xs text-white px-1 py-0.5 ml-2 rounded">NEW</span>}
+            </li>
+            <div className="mt-6 text-xs text-gray-400 uppercase px-2">Plugins</div>
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaCalendarAlt className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Calendar</span>
+              {!isCollapsed && <span className="bg-red-500 text-xs text-white px-1 py-0.5 ml-2 rounded">PRO</span>}
             </li>
           </ul>
         </div>
-
-        <div>
-          {/* Otros elementos del menú, como el botón de logout */}
-          {/* isAuthenticated &&*/}
+        <div className="px-2 py-4">
+          <ul className="space-y-2">
+            <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
+              <FaChess className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Logout</span>
+            </li>
+          </ul>
         </div>
       </nav>
     )
   );
-};
-
-
+}
