@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../../appContexts/AuthContext';
 import {
   FaTh,
@@ -16,20 +16,20 @@ import {
   FaBars
 } from 'react-icons/fa';
 
-export default function VerticalNavComponent() {
-  const { authToken } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+interface VerticalNavComponentProps {
+  isCollapsed: boolean;
+  toggleMenu: () => void;
+}
 
-  const toggleMenu = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+const VerticalNavComponent: React.FC<VerticalNavComponentProps> = ({ isCollapsed, toggleMenu }) => {
+  const { authToken } = useAuth();
 
   return (
     authToken && (
       <nav className={`bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} h-screen py-4 px-2 flex flex-col justify-between transition-all duration-300 border-r border-gray-700`}>
         <div>
           <div className='flex justify-between items-center px-2'>
-            <span className={`text-white text-2xl font-semibold ${isCollapsed ? 'hidden' : 'block'}`}>chess.com</span>
+            <span className={`text-white text-2xl font-semibold ${isCollapsed ? 'hidden' : 'block'}`}>COREUI</span>
             <button onClick={toggleMenu} className="text-white">
               <FaBars />
             </button>
@@ -94,4 +94,6 @@ export default function VerticalNavComponent() {
       </nav>
     )
   );
-}
+};
+
+export default VerticalNavComponent;
