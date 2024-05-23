@@ -1,7 +1,6 @@
 'use client'
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { rest_authentication, rest_logout } from '../components/auth/dataCript';
-
+import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+import { rest_authentication, rest_logout, UserResponse } from '../components/auth/dataCript';
 
 export const storage_key = 'authToken';
 
@@ -18,8 +17,8 @@ export interface AuthToken {
 // Define context type
 interface AuthContextType {
   authToken: string | null;
-  user: UserData | null;
-  login: (userData: UserData) => Promise<void>;
+  user: UserResponse | null;
+  login: (userData: UserData) => Promise<UserResponse | null>;
   logout: () => void;
 }
 
@@ -33,80 +32,70 @@ interface AuthProviderProps {
 
 // AuthProvider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    initializeAuth();
-
+  // Logout function
+  const logout = useCallback(async () => {
+    try {
+      const token = localStorage.getItem(storage_key);
+      const res = await rest_logout(token || '');
+      if (res.status === 200) {
+        console.log('Logged out successfully');
+        localStorage.clear();
+        setAuthToken(null);
+        setUser(null);
+      } else {
+        console.error('Failed to logout:', res.error || 'Unknown error');
+        localStorage.clear();
+        setAuthToken(null);
+        setUser(null);
+      }
+    } catch (error: any) {
+      console.error('Error during logout:', error.message || error);
+      localStorage.clear();
+      setAuthToken(null);
+      setUser(null);
+    }
   }, []);
 
   // Initialize authentication state from local storage
-  const initializeAuth = () => {
+  const initializeAuth = useCallback(() => {
     const storedToken = localStorage.getItem(storage_key);
-    if (storedToken) {
+    const storedUser = localStorage.getItem('user_data');
+    if (storedToken && storedUser) {
       setAuthToken(storedToken);
-    }
-    else
-    {
+      setUser(JSON.parse(storedUser));
+    } else {
       logout();
     }
-  };
+  }, [logout]);
+
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
 
   // Login function
-  const login = async (userData: UserData) => {
+  const login = useCallback(async (userData: UserData): Promise<UserResponse | null> => {
     try {
-        let token = await rest_authentication(userData);
-        // Ensure token is not null before setting it
-        if (token) {
-
-            localStorage.setItem(storage_key, token);
-            setAuthToken(token);
-
-        } else {
-          
-            console.error('Authentication failed: Token is null');
-            logout()
-            throw new Error('Auth failed');
-            
-
-        }
+      const response = await rest_authentication(userData);
+      if (response.status === 200 && response.body.user_data.token) {
+        const userDetails = response.body.user_data;
+        localStorage.setItem(storage_key, userDetails.token);
+        localStorage.setItem('user_data', JSON.stringify(userDetails));
+        setAuthToken(userDetails.token);
+        setUser(userDetails);
+        return userDetails;
+      } else {
+        console.error('Authentication failed:', response.error || 'Unknown error');
+        return null;
+      }
     } catch (error) {
-        // Handle authentication errors
-        console.error('Error during login:', error);
-        logout();
-        throw new Error('Auth failed');
+      console.error('Error during login:', error);
+      logout();
+      return null;
     }
-};
-
-const logout = async () => {
-
-  try {
-
-    const token = localStorage.getItem(storage_key);
-
-    if (!token) {
-      console.error('No token found in local storage');
-      return;
-    }
-
-    const res = await rest_logout(token);
-
-    if (res.status === 200) {
-      console.log('Logged out successfully');
-        // Limpiar almacenamiento local y estado de autenticación
-        localStorage.clear();
-        setAuthToken(null);
-
-    } else {
-      console.error('Failed to logout:', res.error || 'Unknown error');
-    }
-
-  } catch (error: any) {
-    console.error('Error during logout:', error.message || error);
-  }
-  
-  };
+  }, [logout]);
 
   // Provide context value to children
   return (

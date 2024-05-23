@@ -1,7 +1,7 @@
-import React, { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import { redirect } from 'next/navigation';
-import { storage_key } from '@/app/appContexts/AuthContext';
+import React, { ReactNode, useEffect, useCallback } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { storage_key, useAuth } from '@/app/appContexts/AuthContext';
+import { fetchData } from './dataCript';
 
 interface MiddlewareProps {
   children: ReactNode;
@@ -9,13 +9,37 @@ interface MiddlewareProps {
 
 const RouteMiddleware: React.FC<MiddlewareProps> = ({ children }) => {
   const pathname = usePathname();
-  const token = localStorage.getItem(storage_key)
-  // Verifica si la ruta no es '/login' y redirige si no hay token de autenticación
-  if (pathname !== '/login' && !token) {
-      redirect('/login');
-  }
-  // Renderiza los children si la ruta es '/login' o si hay un token de autenticación
-  return <> { children }</>;
+  const router = useRouter();
+  const { logout, authToken } = useAuth();
+
+  const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem(storage_key) || undefined;
+
+    if (!authToken && !token && pathname !== '/login') {
+      logout();
+      router.push('/login');
+      return;
+    }
+
+    const validateTokenResponse = await fetchData('http://localhost/api/user-cheking', { data: null }, token);
+
+    if (validateTokenResponse.status !== 200) {
+      logout();
+      router.push('/login');
+    }
+  }, [logout, pathname, router, authToken]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  useEffect(() => {
+    if (!authToken && pathname !== '/login') {
+      router.push('/login');
+    }
+  }, [authToken, pathname, router]);
+
+  return <>{children}</>;
 };
 
 export default RouteMiddleware;

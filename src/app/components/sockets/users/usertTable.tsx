@@ -25,6 +25,10 @@ const UsersTable = () => {
 
     // Manejar la recepción de datos del servidor
     socket.on('getUsersList', (data_) => {
+
+      console.log('user data socket')
+      console.log(data_)
+
       const data = data_.data;
       if (Array.isArray(data)) {
         setUsers(data);
