@@ -11,6 +11,7 @@ interface NavComponentProps {
 const NavComponent: React.FC<NavComponentProps> = ({ isCollapsed }) => {
   const { logout } = useAuth();
   const { authToken } = useAuth();
+  const { user } = useAuth();
 
   return (
     <nav className="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700">
@@ -23,7 +24,7 @@ const NavComponent: React.FC<NavComponentProps> = ({ isCollapsed }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
           </svg>
         </button>
-        <span className="text-white text-2xl font-semibold ml-2">COREUI</span>
+        <span className="text-white text-2xl font-semibold ml-2">XChess ({ user?.name })</span>
       </div>
       <div className="flex items-center space-x-4 mr-[200pt]">
         <FaBell className="text-gray-300 hover:text-white cursor-pointer" />

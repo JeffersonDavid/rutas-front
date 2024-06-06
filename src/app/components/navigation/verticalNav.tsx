@@ -3,12 +3,12 @@ import React from 'react';
 import { useAuth } from '../../appContexts/AuthContext';
 import {
   FaTh,
-  FaPalette,
+  FaXRay,
   FaPenNib,
   FaShapes,
   FaToggleOn,
   FaWpforms,
-  FaStar,
+  FaStamp,
   FaBell,
   FaThLarge,
   FaCalendarAlt,
@@ -29,7 +29,7 @@ const VerticalNavComponent: React.FC<VerticalNavComponentProps> = ({ isCollapsed
       <nav className={`bg-gray-900 ${isCollapsed ? 'w-20' : 'w-64'} h-screen py-4 px-2 flex flex-col justify-between transition-all duration-300 border-r border-gray-700`}>
         <div>
           <div className='flex justify-between items-center px-2'>
-            <span className={`text-white text-2xl font-semibold ${isCollapsed ? 'hidden' : 'block'}`}>COREUI</span>
+            <span className={`text-white text-2xl font-semibold ${isCollapsed ? 'hidden' : 'block'}`}>Xchess</span>
             <button onClick={toggleMenu} className="text-white">
               <FaBars />
             </button>
@@ -38,13 +38,15 @@ const VerticalNavComponent: React.FC<VerticalNavComponentProps> = ({ isCollapsed
           <ul className="mt-4 space-y-2">
             <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
               <FaTh className="text-xl" />
-              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Dashboard</span>
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}><a href='/dashboard'> Dashboard </a> </span>
             </li>
-            <div className="mt-6 text-xs text-gray-400 uppercase px-2">Theme</div>
+            <div className="mt-6 text-xs text-gray-400 uppercase px-2">Play</div>
             <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
-              <FaPalette className="text-xl" />
-              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Colors</span>
+              <FaStamp className="text-xl" />
+              <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}> <a href='quick-play'> Partida rapida  </a></span>
             </li>
+
+          { /*
             <li className="flex items-center px-2 py-2 text-gray-300 hover:bg-gray-700 rounded-md cursor-pointer">
               <FaPenNib className="text-xl" />
               <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Typography</span>
@@ -81,6 +83,7 @@ const VerticalNavComponent: React.FC<VerticalNavComponentProps> = ({ isCollapsed
               <span className={`ml-2 text-lg ${isCollapsed ? 'hidden' : 'block'}`}>Calendar</span>
               {!isCollapsed && <span className="bg-red-500 text-xs text-white px-1 py-0.5 ml-2 rounded">PRO</span>}
             </li>
+          */}
           </ul>
         </div>
         <div className="px-2 py-4">

@@ -8,7 +8,6 @@ const Dashboard = () => {
   return (
     <>
       <Middleware>
-        <UserConnection/>
           <div className="mt-[10vh]">
             <UsersTable></UsersTable>
            </div>

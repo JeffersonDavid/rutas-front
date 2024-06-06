@@ -1,50 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useAuth } from '../../../appContexts/AuthContext';
+import { useState } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
-
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  log_status: number;
-}
+import { useWebSocket } from '../../../appContexts/WebsocketContext'; // Ajusta la ruta según tu estructura de carpetas
 
 const UsersTable = () => {
-  const { authToken } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
+  const { users } = useWebSocket();
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
-
-  useEffect(() => {
-    const socket: Socket = io('http://localhost:4000');
-
-    socket.on('connect', () => {
-      console.log('Connected to the WebSocket server');
-      socket.emit('getUsersList', authToken); // Emitir el token para obtener la lista de usuarios
-    });
-
-    socket.on('getUsersList', (data_) => {
-      console.log('Received user data from socket');
-      console.log(data_);
-
-      // Asegurarse de que 'data_' tenga la propiedad 'data' que contiene la lista de usuarios
-      const data = data_.data.data;
-
-      console.log('parsed data');
-      console.log(data)
-
-      if (Array.isArray(data)) {
-        setUsers(data);
-      } else {
-        console.error('Expected an array but received:', data);
-      }
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [authToken]);
 
   const currentUserData = localStorage.getItem('user_data');
   const currentUserId = currentUserData ? JSON.parse(currentUserData).id : null;
@@ -68,8 +29,8 @@ const UsersTable = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user, index) => (
-              <tr key={index} className="hover:bg-gray-700 transition duration-200">
+            {filteredUsers.map(user => (
+              <tr key={user.id} className="hover:bg-gray-700 transition duration-200">
                 <td className="py-3 px-6 border-b border-gray-700 flex items-center">
                   <img src={`https://via.placeholder.com/40?text=${user.name.charAt(0)}`} alt="User Avatar" className="w-10 h-10 rounded-full mr-3" />
                   <div>
