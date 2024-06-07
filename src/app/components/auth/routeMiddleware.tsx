@@ -12,7 +12,9 @@ const RouteMiddleware: React.FC<MiddlewareProps> = ({ children }) => {
   const router = useRouter();
   const { logout, authToken } = useAuth();
 
+
   const checkAuth = useCallback(async () => {
+
     const token = localStorage.getItem(storage_key) || undefined;
 
     if (!authToken && !token && pathname !== '/login') {
@@ -21,6 +23,7 @@ const RouteMiddleware: React.FC<MiddlewareProps> = ({ children }) => {
       return;
     }
 
+    debugger
     const validateTokenResponse = await fetchData('http://localhost/api/user-cheking', { data: null }, token);
 
     if (validateTokenResponse.status !== 200) {
