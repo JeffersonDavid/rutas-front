@@ -1,11 +1,44 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
-import { useWebSocket } from '../../../appContexts/WebsocketContext'; // Ajusta la ruta según tu estructura de carpetas
+import { useWebSocket } from '../../../appContexts/WebsocketContext'; 
+import { useAuth } from '@/app/appContexts/AuthContext';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  log_status: number;
+}
 
 const UsersTable = () => {
-  const { users } = useWebSocket();
+
+  const { authToken } = useAuth();
+  const { socket } = useWebSocket();
+  const [users, setUsers] = useState<User[]>([]);
   const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('getUsersList', (data_) => {
+        console.log('Received user data from socket', data_);
+        const data = data_.data.data; // Ajusta esto según la estructura correcta
+
+        if (Array.isArray(data)) {
+          setUsers(data);
+        } else {
+          console.error('Expected an array but received:', data);
+        }
+      });
+
+      // Emitir evento para obtener la lista de usuarios al conectar
+      socket.emit('getUsersList', authToken );
+
+      return () => {
+        socket.off('getUsersList'); // Limpiar suscripción
+      };
+    }
+  }, [socket]);
 
   const currentUserData = localStorage.getItem('user_data');
   const currentUserId = currentUserData ? JSON.parse(currentUserData).id : null;

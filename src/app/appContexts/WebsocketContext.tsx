@@ -2,15 +2,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
-interface User {
-  id: number;
-  name: string;
-  email: string;
-  log_status: number;
-}
-
 interface WebSocketContextType {
-  users: User[];
   socket: Socket | null;
 }
 
@@ -18,7 +10,6 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const { authToken } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
@@ -27,18 +18,6 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on('connect', () => {
       console.log('Connected to the WebSocket server');
       newSocket.emit('setUserState', authToken);
-      newSocket.emit('getUsersList', authToken);
-    });
-
-    newSocket.on('getUsersList', (data_) => {
-      console.log('Received user data from socket');
-      const data = data_.data.data;
-
-      if (Array.isArray(data)) {
-        setUsers(data);
-      } else {
-        console.error('Expected an array but received:', data);
-      }
     });
 
     setSocket(newSocket);
@@ -49,7 +28,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   }, [authToken]);
 
   return (
-    <WebSocketContext.Provider value={{ users, socket }}>
+    <WebSocketContext.Provider value={{ socket }}>
       {children}
     </WebSocketContext.Provider>
   );
