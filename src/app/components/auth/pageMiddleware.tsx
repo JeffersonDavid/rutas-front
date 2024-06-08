@@ -14,7 +14,7 @@ const Middleware: React.FC<MiddlewareProps> = ({ children }) => {
   const { authToken } = useAuth();
   if(pathname != '/login')
   children = authToken ? children : null
-  return <> <RouteMiddleware> {children} </RouteMiddleware>  </>
+  return <>  {children}  </>
 };
 
 export default Middleware;

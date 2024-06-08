@@ -85,6 +85,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.setItem('user_data', JSON.stringify(userDetails));
         setAuthToken(userDetails.token);
         setUser(userDetails);
+        document.cookie = `authToken=${userDetails.token}; path=/;`;
+        console.log('login realizadoooooo')
         return userDetails;
       } else {
         console.error('Authentication failed:', response.error || 'Unknown error');

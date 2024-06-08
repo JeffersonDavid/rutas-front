@@ -23,7 +23,6 @@ const RouteMiddleware: React.FC<MiddlewareProps> = ({ children }) => {
       return;
     }
 
-    debugger
     const validateTokenResponse = await fetchData('http://localhost/api/user-cheking', { data: null }, token);
 
     if (validateTokenResponse.status !== 200) {
