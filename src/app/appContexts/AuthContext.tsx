@@ -10,13 +10,9 @@ export interface UserData {
   password: string;
 }
 
-export interface AuthToken {
-  authToken: string;
-}
-
 // Define context type
 interface AuthContextType {
-  authToken: string | null;
+  authToken: string;
   user: UserResponse | null;
   login: (userData: UserData) => Promise<UserResponse | null>;
   logout: () => void;
@@ -33,7 +29,7 @@ interface AuthProviderProps {
 // AuthProvider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserResponse | null>(null);
-  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authToken, setAuthToken] = useState<string>('');
 
   // Logout function
   const logout = useCallback(async () => {
@@ -43,18 +39,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (res.status === 200) {
         console.log('Logged out successfully');
         localStorage.clear();
-        setAuthToken(null);
+        setAuthToken('');
         setUser(null);
       } else {
         console.error('Failed to logout:', res.error || 'Unknown error');
         localStorage.clear();
-        setAuthToken(null);
+        setAuthToken('');
         setUser(null);
       }
     } catch (error: any) {
       console.error('Error during logout:', error.message || error);
       localStorage.clear();
-      setAuthToken(null);
+      setAuthToken('');
       setUser(null);
     }
   }, []);
@@ -101,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Provide context value to children
   return (
-    <AuthContext.Provider value={{ authToken, user, login, logout }}>
+    <AuthContext.Provider value={{ authToken: authToken || '', user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

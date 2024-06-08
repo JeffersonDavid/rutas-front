@@ -2,14 +2,20 @@
 import { useState, useEffect } from 'react';
 import { useWebSocket } from '../appContexts/WebsocketContext';
 import { useAuth } from '@/app/appContexts/AuthContext';
+import { fetchData } from '../components/auth/dataCript';
 
 const QuickPlay: React.FC = () => {
 
   const [searching, setSearching] = useState(false);
+  const { authToken } = useAuth();
+  const { socket } = useWebSocket();
 
-  const handleSearchClick = () => {
+
+  const handleSearchClick = async () => {
     setSearching(true);
-    // Aquí puedes agregar lógica adicional para manejar la búsqueda de partida, por ejemplo, emitir un evento WebSocket.
+
+    const search = await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken );
+    console.log(search)
   };
 
   return (
