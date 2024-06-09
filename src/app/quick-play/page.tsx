@@ -1,22 +1,45 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWebSocket } from '../appContexts/WebsocketContext';
 import { useAuth } from '@/app/appContexts/AuthContext';
 import { fetchData } from '../components/auth/dataCript';
 
-const QuickPlay: React.FC = () => {
+interface Iplayer {
+  user_id: number;
+  status: number;
+  updated_at: string;
+  created_at: string;
+  id: number;
+}
 
+const QuickPlay: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const { authToken } = useAuth();
   const { socket } = useWebSocket();
-
+  const [realTimeData, setRealTimeData] = useState<any>(null);
 
   const handleSearchClick = async () => {
     setSearching(true);
+    await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken);
 
-    const search = await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken );
-    console.log(search)
+    // Emit the play event to the server after creating the player
+    if (socket) {
+      socket.emit('play', { authToken });
+      socket.on('play', (data) => {
+        console.log('Received play data from socket', data);
+        setRealTimeData(data);
+      });
+    }
   };
+
+  // Clean up WebSocket connection when the component unmounts
+  useEffect(() => {
+    return () => {
+      if (socket) {
+        socket.off('play');
+      }
+    };
+  }, [socket]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
@@ -29,6 +52,12 @@ const QuickPlay: React.FC = () => {
       {searching && (
         <div className="text-center text-white">
           <p className="bg-gray-800 p-2 rounded animate-pulse">Buscando...</p>
+        </div>
+      )}
+      {realTimeData && (
+        <div className="text-white mt-4">
+          <p><strong>Real Time Data:</strong></p>
+          <pre>{JSON.stringify(realTimeData, null, 2)}</pre>
         </div>
       )}
     </div>
