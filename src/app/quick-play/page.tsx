@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { useWebSocket } from '../appContexts/WebsocketContext';
+import io from 'socket.io-client';
 import { useAuth } from '@/app/appContexts/AuthContext';
 import { fetchData } from '../components/auth/dataCript';
 
@@ -15,16 +15,28 @@ interface Iplayer {
 const QuickPlay: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const { authToken } = useAuth();
-  const { socket } = useWebSocket();
   const [realTimeData, setRealTimeData] = useState<any>(null);
+
+  const { user } =  useAuth();
+
+  console.log('useeeeeeeeeeeeeeeeeeeeeer')
+  console.log(user)
+
+
+  const socket = io('http://localhost:4000', {
+    query: {
+      user_id :  user.id
+    }
+  });
 
   const handleSearchClick = async () => {
     setSearching(true);
-    await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken);
+    const waitingList = await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken);
+    console.log(waitingList);
 
     // Emit the play event to the server after creating the player
     if (socket) {
-      socket.emit('play', { authToken });
+      socket.emit('play', { test:'test' });
       socket.on('play', (data) => {
         console.log('Received play data from socket', data);
         setRealTimeData(data);
@@ -37,6 +49,7 @@ const QuickPlay: React.FC = () => {
     return () => {
       if (socket) {
         socket.off('play');
+        socket.disconnect();
       }
     };
   }, [socket]);
@@ -63,5 +76,7 @@ const QuickPlay: React.FC = () => {
     </div>
   );
 };
+
+
 
 export default QuickPlay;
