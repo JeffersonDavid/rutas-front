@@ -1,53 +1,50 @@
-'use client';
-import React, { useState, useEffect } from 'react';
+'use client'
 import io from 'socket.io-client';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/appContexts/AuthContext';
 import { fetchData } from '../components/auth/dataCript';
 
-interface Iplayer {
-  user_id: number;
-  status: number;
-  updated_at: string;
-  created_at: string;
-  id: number;
-}
 
 const QuickPlay: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const { authToken } = useAuth();
   const [realTimeData, setRealTimeData] = useState<any>(null);
   const { user } = useAuth();
-  let user_ :any = user;
+  let user_: any = user;
 
-  const socket = io('http://localhost:4000', {
-    query: {
-      user_id: user_.id,
-    },
-  });
+  const socketRef = useRef<any>(null);
 
   useEffect(() => {
-    // Set up event listener for the 'play' event
-    socket.on('play', (data) => {
-      console.log('Received play data from socket:', data);
-      setRealTimeData(data);
-    });
+    if (!socketRef.current) {
+      socketRef.current = io('http://localhost:4000', {
+        query: { user_id: user_.id },
+      });
+
+      socketRef.current.on('play', (data:any) => {
+        console.log('Received play data from socket', data);
+        setRealTimeData(data);
+      });
+
+      socketRef.current.on('connected', (data:any) => {
+        console.log('Socket connected with ID:', data.socketId);
+      });
+    }
 
     // Clean up WebSocket connection when the component unmounts
     return () => {
-      //socket.off('play');
-      //socket.disconnect();
+      if (socketRef.current) {
+       // socketRef.current.disconnect();
+      }
     };
-  }, [socket]);
+  }, [user_.id]);
 
   const handleSearchClick = async () => {
     setSearching(true);
     const waitingList = await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken);
     console.log(waitingList);
 
-    // Emit the play event to the server after creating the player
-    if (socket) {
-      console.log('entra if socket')
-      socket.emit('play', { user_id: user_.id });
+    if (socketRef.current) {
+      socketRef.current.emit('play', { user_id: user_.id });
     }
   };
 
