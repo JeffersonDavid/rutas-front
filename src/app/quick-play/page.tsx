@@ -16,18 +16,28 @@ const QuickPlay: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const { authToken } = useAuth();
   const [realTimeData, setRealTimeData] = useState<any>(null);
-
-  const { user } =  useAuth();
-
-  console.log('useeeeeeeeeeeeeeeeeeeeeer')
-  console.log(user)
-
+  const { user } = useAuth();
+  let user_ :any = user;
 
   const socket = io('http://localhost:4000', {
     query: {
-      user_id :  user.id
-    }
+      user_id: user_.id,
+    },
   });
+
+  useEffect(() => {
+    // Set up event listener for the 'play' event
+    socket.on('play', (data) => {
+      console.log('Received play data from socket:', data);
+      setRealTimeData(data);
+    });
+
+    // Clean up WebSocket connection when the component unmounts
+    return () => {
+      //socket.off('play');
+      //socket.disconnect();
+    };
+  }, [socket]);
 
   const handleSearchClick = async () => {
     setSearching(true);
@@ -36,23 +46,10 @@ const QuickPlay: React.FC = () => {
 
     // Emit the play event to the server after creating the player
     if (socket) {
-      socket.emit('play', { test:'test' });
-      socket.on('play', (data) => {
-        console.log('Received play data from socket', data);
-        setRealTimeData(data);
-      });
+      console.log('entra if socket')
+      socket.emit('play', { user_id: user_.id });
     }
   };
-
-  // Clean up WebSocket connection when the component unmounts
-  useEffect(() => {
-    return () => {
-      if (socket) {
-        socket.off('play');
-        socket.disconnect();
-      }
-    };
-  }, [socket]);
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
@@ -76,7 +73,5 @@ const QuickPlay: React.FC = () => {
     </div>
   );
 };
-
-
 
 export default QuickPlay;
