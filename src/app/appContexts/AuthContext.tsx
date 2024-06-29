@@ -1,8 +1,13 @@
 'use client'
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
-import { rest_authentication, rest_logout, UserResponse } from '../components/auth/dataCript';
+import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../components/auth/dataCript';
 
 export const storage_key = 'authToken';
+
+// AuthProvider Props
+export interface AuthProviderProps {
+  children: ReactNode;
+}
 
 // Define interfaces
 export interface UserData {
@@ -11,48 +16,45 @@ export interface UserData {
 }
 
 // Define context type
-interface AuthContextType {
+export interface AuthContextType {
   authToken: string;
   user: UserResponse | null;
   login: (userData: UserData) => Promise<UserResponse | null>;
   logout: () => void;
+  user_is_logged: boolean;
 }
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// AuthProvider Props
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
 // AuthProvider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [authToken, setAuthToken] = useState<string>('');
+  const [user_is_logged, setUser_is_logged] = useState<boolean>(false);
+
+  // Helper function to clear auth state
+  const clearAuthState = () => {
+    localStorage.clear();
+    setAuthToken('');
+    setUser(null);
+    setUser_is_logged(false);
+  };
 
   // Logout function
   const logout = useCallback(async () => {
-    
     try {
       const token = localStorage.getItem(storage_key);
       const res = await rest_logout(token || '');
       if (res.status === 200) {
         console.log('Logged out successfully');
-        localStorage.clear();
-        setAuthToken('');
-        setUser(null);
       } else {
         console.error('Failed to logout:', res.error || 'Unknown error');
-        localStorage.clear();
-        setAuthToken('');
-        setUser(null);
       }
     } catch (error: any) {
       console.error('Error during logout:', error.message || error);
-      localStorage.clear();
-      setAuthToken('');
-      setUser(null);
+    } finally {
+      clearAuthState();
     }
   }, []);
 
@@ -63,42 +65,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (storedToken && storedUser) {
       setAuthToken(storedToken);
       setUser(JSON.parse(storedUser));
+      setUser_is_logged(true);
     } else {
-      logout();
+      clearAuthState();
     }
-  }, [logout]);
+  }, []);
 
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);
 
-  // Login function
-  const login = useCallback(async (userData: UserData): Promise<UserResponse | null> => {
+  // Login function Promise<UserResponse | null>
+  const login = useCallback(async ( userData: UserData )  : Promise<UserResponse | null> => {
+
     try {
-      const response = await rest_authentication(userData);
-      if (response.status === 200 && response.body.user_data.token) {
-        const userDetails = response.body.user_data;
-        localStorage.setItem(storage_key, userDetails.token);
-        localStorage.setItem('user_data', JSON.stringify(userDetails));
-        setAuthToken(userDetails.token);
-        setUser(userDetails);
-        document.cookie = `authToken=${userDetails.token}; path=/;`;
-        console.log('login realizadoooooo')
-        return userDetails;
-      } else {
-        console.error('Authentication failed:', response.error || 'Unknown error');
-        return null;
-      }
+
+            const response :ApiResponse = await rest_authentication(userData);
+            if (response.status === 200 && response.body) {
+
+              const userDetails : UserResponse = response.body;
+              localStorage.setItem(storage_key, userDetails.token );
+              localStorage.setItem('user_data', JSON.stringify(userDetails));
+              setAuthToken(userDetails.token);
+              setUser(userDetails);
+              document.cookie = `authToken=${userDetails.token}; path=/;`;
+              setUser_is_logged(true);
+              return userDetails;
+            } else {
+              console.error('Authentication failed:', response.error || 'Unknown error');
+              setUser_is_logged(false);
+              return null;
+            }
+
     } catch (error) {
-      console.error('Error during login:', error);
-      logout();
-      return null;
+            console.error('Error during login:', error);
+            clearAuthState();
+            return null;
     }
-  }, [logout]);
+
+
+  }, []);
 
   // Provide context value to children
   return (
-    <AuthContext.Provider value={{ authToken: authToken || '', user, login, logout }}>
+    <AuthContext.Provider value={{ authToken, user, login, logout, user_is_logged }}>
       {children}
     </AuthContext.Provider>
   );

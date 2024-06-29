@@ -4,7 +4,7 @@ interface JsonRequest {
   data: string | null;
 }
 
-interface ApiResponse {
+export interface ApiResponse {
   status: number;
   headers: HeadersInit;
   body: any;
