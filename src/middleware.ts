@@ -14,17 +14,38 @@ export async function middleware(req: NextRequest) {
   // Obtener el token de las cookies
   const token = req.cookies.get('authToken')?.value;
 
-  // Permitir el acceso a las rutas públicas
+  // Permitir el acceso a las rutas públicas sin autenticación
   if (isPublicPath) {
     return NextResponse.next();
   }
 
-  // Si no hay token y la ruta no es pública, redirigir a /login
+  // Redirigir a /login si no hay token y la ruta no es pública ni raíz
   if (!token) {
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-  
+  try {
+    // Validar el token con una petición a la API
+    const validateTokenResponse = await fetchData('http://localhost/api/user-checking', { data: null }, token);
 
+    // Si la respuesta no es 200, redirigir a /login
+    if (validateTokenResponse.status !== 200) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+
+    // Redirigir a /dashboard si el usuario está autenticado y trata de acceder a la raíz
+    if (pathname === '/') {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+
+  } catch (error) {
+    // En caso de error en la validación, redirigir a /login
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
+
+  // Permitir el acceso a otras rutas si el token es válido
   return NextResponse.next();
 }

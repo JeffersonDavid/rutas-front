@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Logout function
   const logout = useCallback(async () => {
+    
     try {
       const token = localStorage.getItem(storage_key);
       const res = await rest_logout(token || '');

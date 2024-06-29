@@ -2,7 +2,6 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../appContexts/AuthContext';
-import RouteMiddleware from './routeMiddleware';
 
 interface MiddlewareProps {
   children: ReactNode;
