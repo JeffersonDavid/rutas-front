@@ -23,7 +23,6 @@ const Login: React.FC = () => {
     if (isUserLogged) {
       setIsLoading(true);
       setAuthError(false);
-      console.log('usuario logeado***********');
       router.push('/dashboard');
     } else {
       setAuthError(true);

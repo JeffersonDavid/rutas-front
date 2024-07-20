@@ -1,4 +1,5 @@
-'use client'
+// AuthContext.tsx
+'use client';
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../components/auth/dataCript';
 
@@ -77,33 +78,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Login function Promise<UserResponse | null>
   const login = useCallback(async ( userData: UserData )  : Promise<UserResponse | null> => {
-
     try {
-
-            const response :ApiResponse = await rest_authentication(userData);
-            if (response.status === 200 && response.body) {
-
-              const userDetails : UserResponse = response.body;
-              localStorage.setItem(storage_key, userDetails.token );
-              localStorage.setItem('user_data', JSON.stringify(userDetails));
-              setAuthToken(userDetails.token);
-              setUser(userDetails);
-              document.cookie = `authToken=${userDetails.token}; path=/;`;
-              setUser_is_logged(true);
-              return userDetails;
-            } else {
-              console.error('Authentication failed:', response.error || 'Unknown error');
-              setUser_is_logged(false);
-              return null;
-            }
-
+      const response: ApiResponse = await rest_authentication(userData);
+      if (response.status === 200 && response.body) {
+        const userDetails: UserResponse = response.body;
+        localStorage.setItem(storage_key, userDetails.token );
+        localStorage.setItem('user_data', JSON.stringify(userDetails));
+        setAuthToken(userDetails.token);
+        setUser(userDetails);
+        document.cookie = `authToken=${userDetails.token}; path=/;`;
+        setUser_is_logged(true);
+        return userDetails;
+      } else {
+        console.error('Authentication failed:', response.error || 'Unknown error');
+        setUser_is_logged(false);
+        return null;
+      }
     } catch (error) {
-            console.error('Error during login:', error);
-            clearAuthState();
-            return null;
+      console.error('Error during login:', error);
+      clearAuthState();
+      return null;
     }
-
-
   }, []);
 
   // Provide context value to children

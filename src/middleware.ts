@@ -14,6 +14,9 @@ export async function middleware(req: NextRequest) {
   // Obtener el token de las cookies
   const token = req.cookies.get('authToken')?.value;
 
+  console.log('pasaaaaaaaaaaaaaaaaaaaaaa')
+
+  console.log(token)
   // Permitir el acceso a las rutas públicas sin autenticación
   if (isPublicPath) {
     return NextResponse.next();

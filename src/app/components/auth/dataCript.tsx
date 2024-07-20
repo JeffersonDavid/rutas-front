@@ -10,38 +10,49 @@ export interface ApiResponse {
   body: any;
   error?: string;
 }
+
 export interface UserResponse {
+  id: number;
+  name: string;
+  email: string;
   token: string;
-  user_data: {
-    id: number;
-    name: string;
-    email: string;
-  };
 }
 
 export const rest_authentication = async (userData: UserData): Promise<ApiResponse> => {
   try {
     const dataBase64 = btoa(JSON.stringify(userData));
-    const restToken: ApiResponse = await fetchData('http://localhost/api/login', { data: dataBase64 });
+    const restToken = await fetchData('http://localhost/api/login', { data: dataBase64 });
 
-    if (restToken.status === 200 && restToken.body && (restToken.body as UserResponse).token) {
-      const userResponse = restToken.body as UserResponse;
-      console.log(userResponse);
-      return {
-        ...restToken,
-        body: {
-          user_data: {
-            id: userResponse.user_data.id,
-            name: userResponse.user_data.name,
-            email: userResponse.user_data.email,
-            token: userResponse.token,
-          }
-        }
-      };
+    if (restToken.status === 200 && restToken.body) {
+      console.log("Response Body:", restToken.body); // Debugging line
+      const token = restToken.body.token;
+      const userData = restToken.body.user_data;
+
+      debugger
+
+      // Verifica que el token esté presente en la respuesta
+      if (token) {
+        const userResponse: UserResponse = {
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          token: token,
+        };
+
+        return {
+          ...restToken,
+          body: userResponse,
+        };
+      } else {
+        return {
+          ...restToken,
+          error: 'Token not found in response',
+        };
+      }
     } else {
       return {
         ...restToken,
-        error: 'Token not found in response',
+        error: 'Invalid authentication response',
       };
     }
   } catch (error: any) {
@@ -80,7 +91,6 @@ export async function fetchData(url: string, data: JsonRequest, token?: string):
     'Content-Type': 'application/json',
   };
 
-  // Añadir el token de autorización si está presente
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -93,6 +103,7 @@ export async function fetchData(url: string, data: JsonRequest, token?: string):
     });
 
     const responseData = await response.json();
+    console.log("Fetch Data Response:", responseData); // Debugging line
 
     return {
       status: response.status,
