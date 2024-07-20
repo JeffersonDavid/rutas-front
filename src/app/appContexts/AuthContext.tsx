@@ -1,4 +1,3 @@
-// AuthContext.tsx
 'use client';
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../components/auth/dataCript';
@@ -19,18 +18,26 @@ export interface UserData {
 // Define context type
 export interface AuthContextType {
   authToken: string;
-  user: UserResponse | null;
+  user: UserResponse;
   login: (userData: UserData) => Promise<UserResponse | null>;
   logout: () => void;
   user_is_logged: boolean;
 }
+
+// Default user for non-authenticated state
+const defaultUser: UserResponse = {
+  id: 0,
+  name: '',
+  email: '',
+  token: ''
+};
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // AuthProvider Component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<UserResponse | null>(null);
+  const [user, setUser] = useState<UserResponse>(defaultUser);
   const [authToken, setAuthToken] = useState<string>('');
   const [user_is_logged, setUser_is_logged] = useState<boolean>(false);
 
@@ -38,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const clearAuthState = () => {
     localStorage.clear();
     setAuthToken('');
-    setUser(null);
+    setUser(defaultUser);
     setUser_is_logged(false);
   };
 

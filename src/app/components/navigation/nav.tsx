@@ -23,7 +23,7 @@ const NavComponent: React.FC<NavComponentProps> = ({ isCollapsed }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
               </svg>
             </button>
-            <span className="text-white text-2xl font-semibold ml-2">XChess ({ user_is_logged ? user?.name : null })</span>
+            <span className="text-white text-2xl font-semibold ml-2">XChess ({ user_is_logged ? user.name : null })</span>
           </div>
 
           {user_is_logged && (
