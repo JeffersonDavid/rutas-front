@@ -3,9 +3,9 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
 import { AuthContextType, AuthProviderProps } from './Contracts';
-import { clearAllCookies } from './Utils';
-import { defaultUser } from './Utils';
+import { clearAllCookies , defaultUser, setCookie } from './Utils';
 import { UserData } from './Contracts';
+
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,13 +32,31 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthToken(userDetails.token);
     setUser(userDetails);
     setUser_is_logged(true);
-    document.cookie = `authToken=${userDetails.token}; path=/;`;
+
+    const expiryDate = new Date();
+    expiryDate.setHours( expiryDate.getHours() + 4 );
+
+    setCookie('userData', JSON.stringify( userDetails ), {
+      path: '/',
+      expires: expiryDate,
+      secure: true,
+      sameSite: 'Lax'
+    });
+
+    setCookie('authToken', userDetails.token , {
+      path: '/',
+      expires: expiryDate,
+      secure: true,
+      sameSite: 'Lax'
+    });
+
+  
   };
 
   // Logout function
   const logout = useCallback(async () => {
     try {
-      const token = localStorage.getItem(storage_key);
+      const token = localStorage.getItem('storage_key');
       const res = await rest_logout(token || '');
       if (res.status === 200) {
         console.log('Logged out successfully');
@@ -54,7 +72,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Initialize authentication state from local storage
   const initializeAuth = useCallback(() => {
-    const storedToken = localStorage.getItem(storage_key);
+    const storedToken = localStorage.getItem('storage_key');
     const storedUser = localStorage.getItem('user_data');
     if (storedToken && storedUser) {
       setAuthToken(storedToken);
