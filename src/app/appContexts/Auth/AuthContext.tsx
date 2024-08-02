@@ -27,14 +27,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Helper function to set login parameters
   const setLoginParams = (userDetails: UserResponse) => {
 
-    //localStorage.setItem(storage_key, userDetails.token);
-    //localStorage.setItem('user_data', JSON.stringify(userDetails));
+    const expiryDate = new Date();
+    expiryDate.setHours( expiryDate.getHours() + 4 );
+    
     setAuthToken(userDetails.token);
     setUser(userDetails);
     setUser_is_logged(true);
-
-    const expiryDate = new Date();
-    expiryDate.setHours( expiryDate.getHours() + 4 );
 
     setCookie('userData', JSON.stringify( userDetails ), {
       path: '/',
@@ -50,7 +48,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       sameSite: 'Lax'
     });
 
-  
   };
 
   // Logout function
