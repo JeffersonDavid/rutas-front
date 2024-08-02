@@ -1,9 +1,6 @@
 import { UserResponse } from '../../components/auth/dataCript';
 import {CookieOptions} from './Contracts'
 
-export const storage_key = 'authToken';
-export const user_data_key = 'user_data';
-
 export const defaultUser: UserResponse = {
     id: 0,
     name: '',
@@ -52,4 +49,18 @@ export const setCookie = (name: string, value: string, options: CookieOptions = 
   
     document.cookie = cookieString;
   };
+
+
+  // utils/cookies.ts
+export const getCookie = (name: string): string | null => {
+    const nameEQ = name + '=';
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+  };
+  
   

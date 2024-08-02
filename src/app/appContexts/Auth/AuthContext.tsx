@@ -3,9 +3,8 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
 import { AuthContextType, AuthProviderProps } from './Contracts';
-import { clearAllCookies , defaultUser, setCookie } from './Utils';
+import { clearAllCookies, defaultUser, setCookie, getCookie } from './Utils';
 import { UserData } from './Contracts';
-
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,7 +17,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Helper function to clear auth state
   const clearAuthState = () => {
     localStorage.clear();
-    clearAllCookies
+    clearAllCookies();
     setAuthToken('');
     setUser(defaultUser);
     setUser_is_logged(false);
@@ -26,35 +25,34 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Helper function to set login parameters
   const setLoginParams = (userDetails: UserResponse) => {
-
     const expiryDate = new Date();
-    expiryDate.setHours( expiryDate.getHours() + 4 );
-    
+    expiryDate.setHours(expiryDate.getHours() + 4);
+
     setAuthToken(userDetails.token);
     setUser(userDetails);
     setUser_is_logged(true);
 
-    setCookie('userData', JSON.stringify( userDetails ), {
+    setCookie('userData', JSON.stringify(userDetails), {
       path: '/',
       expires: expiryDate,
       secure: true,
-      sameSite: 'Lax'
+      sameSite: 'Lax',
     });
 
-    setCookie('authToken', userDetails.token , {
+    setCookie('authToken', userDetails.token, {
       path: '/',
       expires: expiryDate,
       secure: true,
-      sameSite: 'Lax'
+      sameSite: 'Lax',
     });
-
   };
 
   // Logout function
   const logout = useCallback(async () => {
     try {
-      const token = localStorage.getItem('storage_key');
+      const token = getCookie('authToken');
       const res = await rest_logout(token || '');
+
       if (res.status === 200) {
         console.log('Logged out successfully');
       } else {
@@ -67,10 +65,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Initialize authentication state from local storage
+  // Initialize authentication state from cookies
   const initializeAuth = useCallback(() => {
-    const storedToken = localStorage.getItem('storage_key');
-    const storedUser = localStorage.getItem('user_data');
+    const storedToken = getCookie('authToken');
+    const storedUser = getCookie('userData');
+
     if (storedToken && storedUser) {
       setAuthToken(storedToken);
       setUser(JSON.parse(storedUser));
@@ -88,12 +87,11 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = useCallback(async (userData: UserData): Promise<UserResponse | null> => {
     try {
       const response: ApiResponse = await rest_authentication(userData);
+
       if (response.status === 200 && response.body) {
-
-          const userDetails: UserResponse = response.body;
-          setLoginParams(userDetails);
-          return userDetails;
-
+        const userDetails: UserResponse = response.body;
+        setLoginParams(userDetails);
+        return userDetails;
       } else {
         console.error('Authentication failed:', response.error || 'Unknown error');
         setUser_is_logged(false);
