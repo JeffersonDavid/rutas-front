@@ -1,15 +1,15 @@
 import { UserResponse } from '../../components/auth/dataCript';
+import {CookieOptions} from './Contracts'
 
 export const storage_key = 'authToken';
 export const user_data_key = 'user_data';
+
 export const defaultUser: UserResponse = {
     id: 0,
     name: '',
     email: '',
     token: ''
 };
-
-
 
 // utils/clearCookies.ts
 export const clearAllCookies = () => {
@@ -21,9 +21,6 @@ export const clearAllCookies = () => {
       document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
     }
 };
-
-// utils/cookies.ts
-
 
 
 export const setCookie = (name: string, value: string, options: CookieOptions = {}) => {

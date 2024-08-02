@@ -2,8 +2,10 @@
 
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
-import { AuthContextType, AuthProviderProps,defaultUser, storage_key, user_data_key } from './Contracts';
+import { AuthContextType, AuthProviderProps } from './Contracts';
 import { clearAllCookies } from './Utils';
+import { defaultUser } from './Utils';
+import { UserData } from './Contracts';
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
