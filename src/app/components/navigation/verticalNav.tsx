@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useAuth } from '../../appContexts/AuthContext';
+import { useAuth } from '../../appContexts/Auth/AuthContext';
 import { FaTh, FaStamp, FaChess, FaBars } from 'react-icons/fa';
 
 interface VerticalNavComponentProps {

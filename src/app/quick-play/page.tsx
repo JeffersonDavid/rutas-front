@@ -1,7 +1,7 @@
 'use client'
 import io from 'socket.io-client';
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '@/app/appContexts/AuthContext';
+import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { fetchData } from '../components/auth/dataCript';
 
 

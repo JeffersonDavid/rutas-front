@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { useWebSocket } from '../../../appContexts/WebsocketContext'; 
-import { useAuth } from '@/app/appContexts/AuthContext';
+import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 
 interface User {
   id: number;

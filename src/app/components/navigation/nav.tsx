@@ -2,7 +2,7 @@
 import React from 'react';
 import { FaBell, FaEnvelope, FaList, FaMoon, FaUser } from 'react-icons/fa';
 import Dropdown from './dropdown';
-import { useAuth } from '../../appContexts/AuthContext';
+import { useAuth } from '../../appContexts/Auth/AuthContext';
 
 interface NavComponentProps {
   isCollapsed: boolean;

@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import { useAuth } from '../../appContexts/AuthContext';
+import { useAuth } from '../../appContexts/Auth/AuthContext';
 
 interface MiddlewareProps {
   children: ReactNode;

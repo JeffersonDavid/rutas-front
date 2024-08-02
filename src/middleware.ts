@@ -1,9 +1,20 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { fetchData } from './app/components/auth/dataCript';
+import { parse } from 'cookie';
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+
+  // Obtener la cadena de cookies desde los headers de la solicitud
+  const cookies = req.headers.get('cookie') || '';
+  
+  // Parsear las cookies en un objeto clave-valor
+  const parsedCookies = parse(cookies);
+
+  console.log('Cookies:', parsedCookies);
+
 
   // Define las rutas públicas que no requieren autenticación
   const publicPaths = ['/login', '/_next', '/static'];

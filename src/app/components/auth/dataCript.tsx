@@ -1,4 +1,4 @@
-import { UserData } from '../../appContexts/AuthContext';
+import { UserData } from '../../appContexts/Auth/AuthContext';
 
 interface JsonRequest {
   data: string | null;

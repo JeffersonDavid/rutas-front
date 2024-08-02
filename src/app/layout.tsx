@@ -3,7 +3,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavComponent from './components/navigation/nav';
-import { AuthProvider, useAuth } from "./appContexts/AuthContext";
+import { AuthProvider, useAuth } from "./appContexts/Auth/AuthContext";
 import { LoaderProvider } from "./appContexts/AppLoader";
 import { WebSocketProvider } from "./appContexts/WebsocketContext";
 import VerticalNavComponent from "./components/navigation/verticalNav";

@@ -1,42 +1,14 @@
 'use client';
+
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
-import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../components/auth/dataCript';
-
-export const storage_key = 'authToken';
-
-// AuthProvider Props
-export interface AuthProviderProps {
-  children: ReactNode;
-}
-
-// Define interfaces
-export interface UserData {
-  name: string;
-  password: string;
-}
-
-// Define context type
-export interface AuthContextType {
-  authToken: string;
-  user: UserResponse;
-  login: (userData: UserData) => Promise<UserResponse | null>;
-  logout: () => void;
-  user_is_logged: boolean;
-}
-
-// Default user for non-authenticated state
-const defaultUser: UserResponse = {
-  id: 0,
-  name: '',
-  email: '',
-  token: ''
-};
+import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
+import { AuthContextType, AuthProviderProps,defaultUser, storage_key, user_data_key } from './Contracts';
+import { clearAllCookies } from './Utils';
 
 // Create AuthContext
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// AuthProvider Component
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserResponse>(defaultUser);
   const [authToken, setAuthToken] = useState<string>('');
   const [user_is_logged, setUser_is_logged] = useState<boolean>(false);
@@ -44,9 +16,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Helper function to clear auth state
   const clearAuthState = () => {
     localStorage.clear();
+    clearAllCookies
     setAuthToken('');
     setUser(defaultUser);
     setUser_is_logged(false);
+  };
+
+  // Helper function to set login parameters
+  const setLoginParams = (userDetails: UserResponse) => {
+
+    //localStorage.setItem(storage_key, userDetails.token);
+    //localStorage.setItem('user_data', JSON.stringify(userDetails));
+    setAuthToken(userDetails.token);
+    setUser(userDetails);
+    setUser_is_logged(true);
+    document.cookie = `authToken=${userDetails.token}; path=/;`;
   };
 
   // Logout function
@@ -83,19 +67,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     initializeAuth();
   }, [initializeAuth]);
 
-  // Login function Promise<UserResponse | null>
-  const login = useCallback(async ( userData: UserData )  : Promise<UserResponse | null> => {
+  // Login function
+  const login = useCallback(async (userData: UserData): Promise<UserResponse | null> => {
     try {
       const response: ApiResponse = await rest_authentication(userData);
       if (response.status === 200 && response.body) {
-        const userDetails: UserResponse = response.body;
-        localStorage.setItem(storage_key, userDetails.token );
-        localStorage.setItem('user_data', JSON.stringify(userDetails));
-        setAuthToken(userDetails.token);
-        setUser(userDetails);
-        document.cookie = `authToken=${userDetails.token}; path=/;`;
-        setUser_is_logged(true);
-        return userDetails;
+
+          const userDetails: UserResponse = response.body;
+          setLoginParams(userDetails);
+          return userDetails;
+
       } else {
         console.error('Authentication failed:', response.error || 'Unknown error');
         setUser_is_logged(false);
@@ -124,3 +105,5 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+export { AuthProvider };
