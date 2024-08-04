@@ -1,3 +1,4 @@
+import axios, { AxiosResponse, AxiosHeaders } from 'axios';
 import { UserData } from "@/app/appContexts/Auth/Contracts";
 
 interface JsonRequest {
@@ -6,7 +7,7 @@ interface JsonRequest {
 
 export interface ApiResponse {
   status: number;
-  headers: HeadersInit;
+  headers: any;
   body: any;
   error?: string;
 }
@@ -27,6 +28,7 @@ export const rest_authentication = async (userData: UserData): Promise<ApiRespon
       console.log("Response Body:", restToken.body); // Debugging line
       const token = restToken.body.token;
       const userData = restToken.body.user_data;
+
       // Verifica que el token esté presente en la respuesta
       if (token) {
         const userResponse: UserResponse = {
@@ -55,7 +57,7 @@ export const rest_authentication = async (userData: UserData): Promise<ApiRespon
   } catch (error: any) {
     return {
       status: 500,
-      headers: {},
+      headers: {} as AxiosHeaders,
       body: null,
       error: `Error during authentication: ${error.message}`,
     };
@@ -76,7 +78,7 @@ export const rest_logout = async (token: string): Promise<ApiResponse> => {
 
     return {
       status: 500,
-      headers: {},
+      headers: {} as AxiosHeaders,
       body: null,
       error: error.message,
     };
@@ -84,35 +86,29 @@ export const rest_logout = async (token: string): Promise<ApiResponse> => {
 };
 
 export async function fetchData(url: string, data: JsonRequest, token?: string): Promise<ApiResponse> {
-  const headers: HeadersInit = {
+  const headers: AxiosHeaders = new AxiosHeaders({
     'Content-Type': 'application/json',
-  };
+  });
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(data),
-    });
-
-    const responseData = await response.json();
-    console.log("Fetch Data Response:", responseData); // Debugging line
+    const response: AxiosResponse = await axios.post(url, data, { headers });
+    console.log("Fetch Data Response:", response.data); // Debugging line
 
     return {
       status: response.status,
       headers: response.headers,
-      body: responseData,
+      body: response.data,
     };
   } catch (error: any) {
     console.error('Error:', error.message);
 
     return {
-      status: 500,
-      headers: {},
+      status: error.response?.status || 500,
+      headers: error.response?.headers || {} as AxiosHeaders,
       body: null,
       error: error.message,
     };
