@@ -1,65 +1,47 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { fetchData } from './app/components/auth/dataCript';
-import { parse } from 'cookie';
+import { validateToken, getTokenFromCookies , isPublicPath , LOGIN_URL, DASHBOARD_URL } from './md/utils';
+
 
 export async function middleware(req: NextRequest) {
+
   const { pathname } = req.nextUrl;
-
-
-  // Obtener la cadena de cookies desde los headers de la solicitud
-  const cookies = req.headers.get('cookie') || '';
-  
-  // Parsear las cookies en un objeto clave-valor
-  const parsedCookies = parse(cookies);
-
-  console.log('Cookies:', parsedCookies);
-
-
-  // Define las rutas públicas que no requieren autenticación
-  const publicPaths = ['/login', '/_next', '/static'];
-
-  // Verificar si la ruta actual es una ruta pública
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
-
-  // Obtener el token de las cookies
-  const token = req.cookies.get('authToken')?.value;
-
-  console.log('pasaaaaaaaaaaaaaaaaaaaaaa')
-
+  const token = getTokenFromCookies(req);
+  console.log('token from middlleware')
   console.log(token)
-  // Permitir el acceso a las rutas públicas sin autenticación
-  if (isPublicPath) {
+
+  if (isPublicPath(pathname)) {
+    
+       console.log('entra isPublicPath')
+    if (pathname === LOGIN_URL && token) {
+
+      console.log('cumple pathname === LOGIN_URL && token')
+      
+      const isValidToken :boolean = await validateToken(token);
+
+      console.log('isValidToken??')
+      console.log(isValidToken)
+
+      if (isValidToken) {
+        return NextResponse.redirect(new URL(DASHBOARD_URL, req.url));
+      }
+    }
     return NextResponse.next();
   }
 
-  // Redirigir a /login si no hay token y la ruta no es pública ni raíz
   if (!token) {
-    if (pathname === '/') {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL(LOGIN_URL, req.url));
   }
 
-  try {
-    // Validar el token con una petición a la API
-    const validateTokenResponse = await fetchData('http://localhost/api/user-checking', { data: null }, token);
+  const isValidToken = await validateToken(token);
 
-    // Si la respuesta no es 200, redirigir a /login
-    if (validateTokenResponse.status !== 200) {
-      return NextResponse.redirect(new URL('/login', req.url));
-    }
-
-    // Redirigir a /dashboard si el usuario está autenticado y trata de acceder a la raíz
-    if (pathname === '/') {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-
-  } catch (error) {
-    // En caso de error en la validación, redirigir a /login
-    return NextResponse.redirect(new URL('/login', req.url));
+  if (!isValidToken) {
+    return NextResponse.redirect(new URL(LOGIN_URL, req.url));
   }
 
-  // Permitir el acceso a otras rutas si el token es válido
+  if (pathname === '/') {
+    return NextResponse.redirect(new URL(DASHBOARD_URL, req.url));
+  }
+
   return NextResponse.next();
 }

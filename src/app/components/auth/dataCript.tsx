@@ -1,4 +1,4 @@
-import { UserData } from '../../appContexts/Auth/AuthContext';
+import { UserData } from "@/app/appContexts/Auth/Contracts";
 
 interface JsonRequest {
   data: string | null;
@@ -27,9 +27,6 @@ export const rest_authentication = async (userData: UserData): Promise<ApiRespon
       console.log("Response Body:", restToken.body); // Debugging line
       const token = restToken.body.token;
       const userData = restToken.body.user_data;
-
-      debugger
-
       // Verifica que el token esté presente en la respuesta
       if (token) {
         const userResponse: UserResponse = {
