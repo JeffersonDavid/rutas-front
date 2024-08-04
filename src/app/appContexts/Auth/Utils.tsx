@@ -9,7 +9,7 @@ export const defaultUser: UserResponse = {
 };
 
 // utils/clearCookies.ts
-export const clearAllCookies = () => {
+export const clearAllCookiesFromClient = () => {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i];

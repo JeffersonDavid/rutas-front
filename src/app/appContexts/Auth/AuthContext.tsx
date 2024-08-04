@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
 import { AuthContextType, AuthProviderProps } from './Contracts';
-import { clearAllCookies, defaultUser, setCookie, getCookie } from './Utils';
+import { clearAllCookiesFromClient, defaultUser, setCookie, getCookie } from './Utils';
 import { UserData } from './Contracts';
 
 // Create AuthContext
@@ -17,7 +17,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Helper function to clear auth state
   const clearAuthState = () => {
     localStorage.clear();
-    clearAllCookies();
+    clearAllCookiesFromClient();
     setAuthToken('');
     setUser(defaultUser);
     setUser_is_logged(false);
