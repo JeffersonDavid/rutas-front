@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server';
 export const PUBLIC_PATHS: string[] = ['/login', '/_next', '/static'];
 export const LOGIN_URL = '/login';
 export const DASHBOARD_URL = '/dashboard';
-export const API_URL = 'http://localhost/api/user-checking';
+export const API_URL = 'http://vmback/api/user-checking';
 
 export async function handlePublicPath(pathname: string, token: string, req: NextRequest) {
   if (pathname === LOGIN_URL && token) {
@@ -39,6 +39,9 @@ export function getTokenFromCookies(req: NextRequest) : string {
 }
 
 export async function validateToken(token: string): Promise<boolean> {
+
+  console.log('validating token')
+
   try {
     const response = await fetchData( API_URL , { data: null }, token);
     return response.status === 200;
@@ -47,3 +50,10 @@ export async function validateToken(token: string): Promise<boolean> {
     return false;
   }
 }
+
+/*
+curl -X POST http://vmback/api/user-checking \
+-H "Authorization: Bearer jK9BBwJDJ5JDEwJE9BWGxlWE5wMnVqZVlDeWcvR3hzVmVjWlU2NUFwTHNVRGlmV2RTWkZBdURyL3hXOVNQVThx1nwfcn" \
+-H "Content-Type: application/json" \
+-d '{"data": null}'
+*/

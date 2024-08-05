@@ -90,6 +90,7 @@ export async function fetchData(url: string, data: JsonRequest, token?: string):
     'Content-Type': 'application/json',
   });
 
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -104,7 +105,9 @@ export async function fetchData(url: string, data: JsonRequest, token?: string):
       body: response.data,
     };
   } catch (error: any) {
+
     console.error('Error:', error.message);
+    console.error('Error-response:', error);
 
     return {
       status: error.response?.status || 500,
