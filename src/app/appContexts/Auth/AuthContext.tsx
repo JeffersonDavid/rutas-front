@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { rest_authentication, rest_logout, UserResponse, ApiResponse } from '../../components/auth/dataCript';
 import { AuthContextType, AuthProviderProps } from './Contracts';
 import { clearAllCookiesFromClient, defaultUser, setCookie, getCookie } from './Utils';

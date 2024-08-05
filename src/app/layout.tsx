@@ -7,7 +7,6 @@ import { AuthProvider, useAuth } from "./appContexts/Auth/AuthContext";
 import { LoaderProvider } from "./appContexts/AppLoader";
 import { WebSocketProvider } from "./appContexts/WebsocketContext";
 import VerticalNavComponent from "./components/navigation/verticalNav";
-import Middleware from "./components/auth/pageMiddleware";
 import { useState } from 'react';
 
 
@@ -30,7 +29,6 @@ export default function RootLayout({
       <AuthProvider>
         <body className={`${inter.className}`}>
           <LoaderProvider>
-            <Middleware>
               <WebSocketProvider>
                 <div className="flex h-screen">      
                   <VerticalNavComponent isCollapsed={isCollapsed} toggleMenu={toggleMenu} />
@@ -42,7 +40,6 @@ export default function RootLayout({
                   </div>
                 </div>
                 </WebSocketProvider>
-            </Middleware>
           </LoaderProvider>
         </body>
       </AuthProvider>
