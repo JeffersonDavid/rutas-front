@@ -22,7 +22,9 @@ const UsersTable = () => {
     if (socket) {
       socket.on('getUsersList', (data_) => {
         console.log('Received user data from socket', data_);
-        const data = data_.data.data; // Ajusta esto según la estructura correcta
+
+        // Verificar si data_ y data_.data existen antes de acceder a data_.data.data
+        const data = data_?.data?.data; 
 
         if (Array.isArray(data)) {
           setUsers(data);
