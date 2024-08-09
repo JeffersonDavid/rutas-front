@@ -1,11 +1,10 @@
-// NavComponent.tsx
 import React from 'react';
 import { FaBell, FaEnvelope, FaList, FaMoon, FaUser } from 'react-icons/fa';
 import Dropdown from '../dropdown';
-import { useAuth } from '../../../appContexts/Auth/AuthContext';
+import { useAuthHandler } from './hooks/useAuthHandler';
 
 const NavComponent: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
-  const { logout, user_is_logged, user } = useAuth();
+  const { handleLogout, user_is_logged, user } = useAuthHandler();
 
   return (
     <nav className="bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 w-full">
@@ -27,7 +26,7 @@ const NavComponent: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
           <Dropdown
             options={[
               <a href="#" className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Profile</a>,
-              <button onClick={logout} className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Logout</button>,
+              <button onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Logout</button>,
             ]}
             title={<FaUser className="text-gray-300 hover:text-white cursor-pointer" />}
           />

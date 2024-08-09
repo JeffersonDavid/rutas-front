@@ -26,7 +26,7 @@ export interface AuthContextType {
     authToken: string;
     user: UserResponse;
     login: (userData: UserData) => Promise<UserResponse | null>;
-    logout: () => void;
+    logout: () => Promise<boolean>;
     user_is_logged: boolean;
 }
   

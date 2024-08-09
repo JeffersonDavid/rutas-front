@@ -48,20 +48,24 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   // Logout function
-  const logout = useCallback(async () => {
+  const logout = useCallback(async (): Promise<boolean> => {
     try {
       const token = getCookie('authToken');
       const res = await rest_logout(token || '');
-
+  
       if (res.status === 200) {
         console.log('Logged out successfully');
+        return true; // Devuelve true si el logout es exitoso
       } else {
         console.error('Failed to logout:', res.error || 'Unknown error');
+        return false; // Devuelve false si el logout falla
       }
     } catch (error: any) {
       console.error('Error during logout:', error.message || error);
+      return false; // Devuelve false si ocurre un error
     } finally {
       clearAuthState();
+      return true;
     }
   }, []);
 
