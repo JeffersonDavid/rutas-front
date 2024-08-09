@@ -88,3 +88,7 @@ nav{
 .nav2{
   border: 1pt solid #373f54;
 }
+
+.options-container{
+  margin-right: 20% !important;
+}
