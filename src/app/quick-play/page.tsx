@@ -10,7 +10,7 @@ import RealTimeDataDisplay from './RealTimeDataDisplay';
 const QuickPlay: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const { authToken, user } = useAuth();
-  const userId = user?.id || '';
+  const userId = user.id
   const { realTimeData, emitPlayEvent } = useWebSocket(userId);
 
   const handleSearchClick = async () => {

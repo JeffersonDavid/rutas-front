@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 
-export const useWebSocket = (userId: string) => {
+export const useWebSocket = (userId: number) => {
   const [realTimeData, setRealTimeData] = useState<any>(null);
   const socketRef = useRef<any>(null);
 
