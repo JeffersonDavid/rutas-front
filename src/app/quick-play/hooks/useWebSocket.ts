@@ -22,14 +22,17 @@ export const useWebSocket = (userId: number) => {
     }
 
     return () => {
+      /*
       if (socketRef.current) {
         socketRef.current.disconnect();
       }
+      */
     };
   }, [userId]);
 
   const emitPlayEvent = () => {
     if (socketRef.current) {
+      console.log('emitiendo mensaje a websocket...')
       socketRef.current.emit('play', { user_id: userId });
     }
   };

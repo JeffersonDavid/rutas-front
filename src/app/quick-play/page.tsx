@@ -16,7 +16,7 @@ const QuickPlay: React.FC = () => {
   const handleSearchClick = async () => {
     setSearching(true);
     const waitingList = await fetchData('http://localhost/api/quick-game/create-player', { data: null }, authToken);
-    console.log(waitingList);
+    console.log('WaitingList created');
 
     emitPlayEvent();
   };
