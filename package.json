@@ -21,7 +21,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "@types/socket.io": "^3.0.2",
     "amqplib": "^0.10.4",
-    "axios": "^1.7.3",
+    "axios": "^1.7.5",
     "cookie": "^0.6.0",
     "crypto-js": "^4.2.0",
     "crypto-library": "^1.0.3",

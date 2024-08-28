@@ -1,5 +1,4 @@
 
-import Middleware from "../components/auth/pageMiddleware";
 import UsersTable from "../components/sockets/users/usertTable";
 
 const Dashboard = () => {
