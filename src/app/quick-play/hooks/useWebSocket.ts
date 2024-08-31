@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
+import { setCookie } from '@/app/appContexts/Auth/Utils';
 
 export const useWebSocket = (userId: number) => {
   const [realTimeData, setRealTimeData] = useState<any>(null);
@@ -14,6 +15,7 @@ export const useWebSocket = (userId: number) => {
       socketRef.current.on('play', (data: any) => {
         console.log('Received play data from socket', data);
         setRealTimeData(data);
+        setCookie( 'game_room', data.payload.game_room_id )
       });
 
       socketRef.current.on('connected', (data: any) => {

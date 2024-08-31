@@ -7,6 +7,7 @@ import SearchButton from './SearchButton';
 import SearchingIndicator from './SearchingIndicator';
 import RealTimeDataDisplay from './RealTimeDataDisplay';
 import ChessBoard from '../core/game/ChessComponents/ChessBoard';
+import { getCookie } from '../appContexts/Auth/Utils';
 
 const QuickPlay: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
@@ -14,6 +15,13 @@ const QuickPlay: React.FC = () => {
   const { authToken, user } = useAuth();
   const userId = user.id;
   const { realTimeData, emitPlayEvent } = useWebSocket(userId);
+
+  // Verifica si existe la cookie 'game_room' al cargar el componente
+  useEffect(() => {
+    if (getCookie('game_room')) {
+      setShouldShowRealTimeBox(true);
+    }
+  }, []);
 
   // Monitorea el cambio de realTimeData para mostrar la caja de datos en tiempo real
   useEffect(() => {
@@ -60,8 +68,7 @@ const RealTimeBox: React.FC = () => {
   return (
     <div className="flex justify-center items-center w-1/2 h-1/2 border border-gray-400">
       {/* Caja vacía con borde gris */}
-      <ChessBoard apiUrl='http://vmback/api/quick-game/chessboard/state'/>
-
+      <ChessBoard apiUrl='http://localhost/api/quick-game/chessboard/state'/>
     </div>
   );
 };

@@ -85,7 +85,7 @@ export const rest_logout = async (token: string): Promise<ApiResponse> => {
   }
 };
 
-export async function fetchData(url: string, data: JsonRequest, token?: string): Promise<ApiResponse> {
+export async function fetchData(url: string, data: JsonRequest, token?: string ): Promise<ApiResponse> {
   const headers: AxiosHeaders = new AxiosHeaders({
     'Content-Type': 'application/json',
   });

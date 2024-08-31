@@ -43,7 +43,7 @@ export async function validateToken(token: string): Promise<boolean> {
   console.log('validating token')
 
   try {
-    const response = await fetchData( API_URL , { data: null }, token);
+    const response = await fetchData( API_URL , { data: null }, token );
     return response.status === 200;
   } catch (error) {
     console.error('Token validation error:', error);
