@@ -6,6 +6,7 @@ import { useWebSocket } from './hooks/useWebSocket';
 import SearchButton from './SearchButton';
 import SearchingIndicator from './SearchingIndicator';
 import RealTimeDataDisplay from './RealTimeDataDisplay';
+import ChessBoard from '../core/game/ChessComponents/ChessBoard';
 
 const QuickPlay: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
@@ -26,7 +27,7 @@ const QuickPlay: React.FC = () => {
     setIsSearching(true);
     try {
       const waitingList = await fetchData(
-        'http://localhost/api/quick-game/create-room',
+        'http://localhost/api/quick-game/rooms',
         { data: null },
         authToken
       );
@@ -59,6 +60,8 @@ const RealTimeBox: React.FC = () => {
   return (
     <div className="flex justify-center items-center w-1/2 h-1/2 border border-gray-400">
       {/* Caja vacía con borde gris */}
+      <ChessBoard apiUrl='http://vmback/api/quick-game/chessboard/state'/>
+
     </div>
   );
 };
