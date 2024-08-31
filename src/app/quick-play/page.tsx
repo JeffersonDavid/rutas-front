@@ -8,39 +8,57 @@ import SearchingIndicator from './SearchingIndicator';
 import RealTimeDataDisplay from './RealTimeDataDisplay';
 
 const QuickPlay: React.FC = () => {
-  const [searching, setSearching] = useState(false);
-  const [showRealTimeBox, setShowRealTimeBox] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [shouldShowRealTimeBox, setShouldShowRealTimeBox] = useState(false);
   const { authToken, user } = useAuth();
   const userId = user.id;
   const { realTimeData, emitPlayEvent } = useWebSocket(userId);
 
-  // Detectar el primer mensaje de realTimeData y ocultar todos los elementos de la pantalla
+  // Monitorea el cambio de realTimeData para mostrar la caja de datos en tiempo real
   useEffect(() => {
     if (realTimeData) {
-      setShowRealTimeBox(true);
+      setShouldShowRealTimeBox(true);
     }
   }, [realTimeData]);
 
+  // Maneja la acción cuando el usuario hace clic en el botón de búsqueda
   const handleSearchClick = async () => {
-    setSearching(true);
-    const waitingList = await fetchData('http://localhost/api/quick-game/create-room', { data: null }, authToken);
-    console.log('WaitingList created');
-    //emitPlayEvent();
+    setIsSearching(true);
+    try {
+      const waitingList = await fetchData(
+        'http://localhost/api/quick-game/create-room',
+        { data: null },
+        authToken
+      );
+      console.log('WaitingList created', waitingList);
+
+      // Aquí puedes llamar a emitPlayEvent si es necesario
+      // emitPlayEvent();
+    } catch (error) {
+      console.error('Error creating WaitingList', error);
+    }
   };
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
-      {showRealTimeBox ? (
-        <div className="flex justify-center items-center w-1/2 h-1/2 border border-gray-400">
-          {/* Caja vacía con borde gris */}
-        </div>
+      {shouldShowRealTimeBox ? (
+        <RealTimeBox />
       ) : (
         <>
           <SearchButton onClick={handleSearchClick} />
-          {searching && <SearchingIndicator />}
+          {isSearching && <SearchingIndicator />}
           {realTimeData && <RealTimeDataDisplay data={realTimeData} />}
         </>
       )}
+    </div>
+  );
+};
+
+// Componente separado para la caja vacía con borde gris
+const RealTimeBox: React.FC = () => {
+  return (
+    <div className="flex justify-center items-center w-1/2 h-1/2 border border-gray-400">
+      {/* Caja vacía con borde gris */}
     </div>
   );
 };
