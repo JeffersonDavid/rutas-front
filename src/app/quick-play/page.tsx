@@ -12,20 +12,24 @@ import { getCookie } from '../appContexts/Auth/Utils';
 const QuickPlay: React.FC = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [shouldShowRealTimeBox, setShouldShowRealTimeBox] = useState(false);
+  const [roomId, setRoomId] = useState<string | null>(null);
   const { authToken, user } = useAuth();
   const userId = user.id;
   const { realTimeData, emitPlayEvent } = useWebSocket(userId);
 
   // Verifica si existe la cookie 'game_room' al cargar el componente
   useEffect(() => {
-    if (getCookie('game_room')) {
+    const cookieRoomId = getCookie('game_room');
+    if (cookieRoomId) {
+      setRoomId(cookieRoomId);
       setShouldShowRealTimeBox(true);
     }
   }, []);
 
-  // Monitorea el cambio de realTimeData para mostrar la caja de datos en tiempo real
+  // Monitorea el cambio de realTimeData para actualizar el roomId y mostrar la caja de datos en tiempo real
   useEffect(() => {
-    if (realTimeData) {
+    if (realTimeData?.room_id) {
+      setRoomId(realTimeData.room_id);
       setShouldShowRealTimeBox(true);
     }
   }, [realTimeData]);
@@ -50,8 +54,8 @@ const QuickPlay: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-gray-900">
-      {shouldShowRealTimeBox ? (
-        <RealTimeBox />
+      {shouldShowRealTimeBox && roomId ? (
+        <RealTimeBox roomId={roomId} />
       ) : (
         <>
           <SearchButton onClick={handleSearchClick} />
@@ -63,12 +67,11 @@ const QuickPlay: React.FC = () => {
   );
 };
 
-// Componente separado para la caja vacía con borde gris
-const RealTimeBox: React.FC = () => {
+// Componente separado para la caja que contiene el tablero de ajedrez
+const RealTimeBox: React.FC<{ roomId: string }> = ({ roomId }) => {
   return (
-    <div className="flex justify-center items-center w-1/2 h-1/2 border border-gray-400">
-      {/* Caja vacía con borde gris */}
-      <ChessBoard apiUrl='http://localhost/api/quick-game/chessboard/state'/>
+    <div className="flex justify-center items-center">
+      <ChessBoard apiUrl={`http://localhost/api/quick-game/boardstate/${roomId}`} />
     </div>
   );
 };
