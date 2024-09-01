@@ -6,7 +6,7 @@ import { useWebSocket } from './hooks/useWebSocket';
 import SearchButton from './SearchButton';
 import SearchingIndicator from './SearchingIndicator';
 import RealTimeDataDisplay from './RealTimeDataDisplay';
-import ChessBoard from '../core/game/ChessComponents/ChessBoard';
+import ChessBoard from '../core/game/ChessComponents/board/ChessBoard';
 import { getCookie } from '../appContexts/Auth/Utils';
 
 const QuickPlay: React.FC = () => {
