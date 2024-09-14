@@ -7,7 +7,11 @@ import ChessCell from './ChessCell';
 
 interface ChessBoardProps {
   apiUrl: string;
-  fetchBoardData?: (url: string, token?: string) => Promise<(string | null)[][] | null>;
+  fetchBoardData?: (url: string, token?: string) => Promise<{
+    board: (string | null)[][],
+    white_player_id: number,
+    black_player_id: number
+  } | null>;
   styles?: ChessBoardStyles;
 }
 
@@ -16,17 +20,38 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   fetchBoardData = useFetchBoardData,
   styles = defaultStyles,
 }) => {
-  const { authToken } = useAuth();
+  const { authToken, user } = useAuth();
+  const userId = user.id;
   const [board, setBoard] = useState<(string | null)[][] | null>(null);
+  const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
 
   useEffect(() => {
     const loadBoard = async () => {
+
       const boardData = await fetchBoardData(apiUrl, authToken);
-      setBoard(boardData);
+
+      console.log('leyend board....')
+      console.log(boardData)
+
+      if (boardData && 'white_player_id' in boardData && 'black_player_id' in boardData) {
+        // Determina si el jugador es blanco o negro comparando el userId
+        if (boardData.white_player_id === userId) {
+          setIsPlayerWhite(true);
+        } else if (boardData.black_player_id === userId) {
+          setIsPlayerWhite(false);
+        }
+
+        // Si el jugador es negro, invertimos el tablero
+        if (boardData.black_player_id === userId) {
+          setBoard(boardData.board.reverse().map((row) => row.reverse()));
+        } else {
+          setBoard(boardData.board);
+        }
+      }
     };
 
     loadBoard();
-  }, [apiUrl, authToken, fetchBoardData]);
+  }, [apiUrl, authToken, fetchBoardData, userId]);
 
   if (!board) {
     return <div>Loading board...</div>;
