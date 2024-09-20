@@ -5,6 +5,7 @@ import { ChessBoardStyles, defaultStyles } from './ChessBoardStyles';
 import { useFetchBoardData } from './useFetchBoardData';
 import ChessCell from './ChessCell';
 import { Piece } from './ChessCell';
+import { movePiece } from './boardUtils' // Importamos la función de movimiento
 
 interface ChessBoardProps {
   apiUrl: string;
@@ -62,19 +63,11 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const pieceAtCell = board[rowIndex][colIndex]; // Pieza en la celda actual
 
-    if (selectedPiece) {
-      // Si hay una pieza seleccionada, intentamos moverla a la nueva posición
-      const newBoard = [...board];
+    if (selectedPiece && selectedCell) {
+      // Usamos la función movePiece para mover la pieza
+      const newBoard = movePiece(board, selectedCell, { row: rowIndex, col: colIndex }, selectedPiece);
 
-      // Mover la pieza seleccionada a la nueva celda
-      newBoard[rowIndex][colIndex] = selectedPiece;
-
-      // Limpiar la celda donde estaba la pieza
-      if (selectedCell) {
-        newBoard[selectedCell.row][selectedCell.col] = null;
-      }
-
-      // Actualizar el estado del tablero
+      // Actualizamos el estado del tablero
       setBoard(newBoard);
 
       // Limpiar la selección
