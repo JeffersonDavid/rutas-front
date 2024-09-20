@@ -8,9 +8,9 @@ import ChessCell from './ChessCell';
 interface ChessBoardProps {
   apiUrl: string;
   fetchBoardData?: (url: string, token?: string) => Promise<{
-    board: (string | null)[][],
-    white_player_id: number,
-    black_player_id: number
+    board: (string | { [key: string]: any } | null)[][];  // board puede contener strings, objetos o nulls
+    white_player_id: number;
+    black_player_id: number;
   } | null>;
   styles?: ChessBoardStyles;
 }
@@ -22,16 +22,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 }) => {
   const { authToken, user } = useAuth();
   const userId = user.id;
-  const [board, setBoard] = useState<(string | null)[][] | null>(null);
+  const [board, setBoard] = useState<(string | { [key: string]: any } | null)[][] | null>(null); // board contiene celdas con strings, objetos o null
   const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
 
   useEffect(() => {
     const loadBoard = async () => {
-
       const boardData = await fetchBoardData(apiUrl, authToken);
 
-      console.log('leyend board....')
-      console.log(boardData)
+      console.log('leyend board....');
+      console.log(boardData);
 
       if (boardData && 'white_player_id' in boardData && 'black_player_id' in boardData) {
         // Determina si el jugador es blanco o negro comparando el userId
@@ -59,12 +58,20 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
   return (
     <div style={{ ...defaultStyles.boardContainer, ...styles.boardContainer }}>
-      <div style={{ ...defaultStyles.board, ...styles.board }}>
+      <div
+        style={{
+          ...defaultStyles.board,
+          ...styles.board,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 50px)', // Ajusta el tablero para que cada celda tenga un ancho de 50px
+          gridTemplateRows: 'repeat(8, 50px)',    // Ajusta el tablero para que cada celda tenga una altura de 50px
+        }}
+      >
         {board.map((row, rowIndex) =>
           row.map((piece, colIndex) => (
             <ChessCell
               key={`${rowIndex}-${colIndex}`}
-              piece={piece}
+              piece={piece}  // piece puede ser string, objeto o null
               isDark={(rowIndex + colIndex) % 2 === 0}
               styles={styles.cell}
             />

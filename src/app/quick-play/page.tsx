@@ -71,9 +71,8 @@ const QuickPlay: React.FC = () => {
 
       {roomId && (
         <div className="flex justify-center items-center">
-          Se ha recibido una respuesta
           {
-            //<ChessBoard apiUrl={`http://localhost/api/quick-game/boardstate/${roomId}`} />
+            <ChessBoard apiUrl={`http://localhost/api/quick-game/boardstate/${roomId}`} />
           }
         </div>
       )}
