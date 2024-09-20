@@ -9,7 +9,7 @@ import { Piece } from './ChessCell';
 interface ChessBoardProps {
   apiUrl: string;
   fetchBoardData?: (url: string, token?: string) => Promise<{
-    board: (string | Piece | null)[][];  // Aseguramos que board sea string, Piece o null
+    board: (string | Piece | null)[][];
     white_player_id: number;
     black_player_id: number;
   } | null>;
@@ -26,8 +26,11 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
   const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
 
-  // Estado para rastrear la celda seleccionada
+  // Estado para rastrear la celda seleccionada (inicio)
   const [selectedCell, setSelectedCell] = useState<{ row: number, col: number } | null>(null);
+
+  // Estado para rastrear si la pieza ha sido seleccionada para mover
+  const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
 
   useEffect(() => {
     const loadBoard = async () => {
@@ -55,9 +58,33 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     return <div>Loading board...</div>;
   }
 
-  // Manejador de clic para seleccionar una celda
+  // Manejador de clic para seleccionar y mover una pieza
   const handleCellClick = (rowIndex: number, colIndex: number) => {
-    setSelectedCell({ row: rowIndex, col: colIndex });
+    const pieceAtCell = board[rowIndex][colIndex]; // Pieza en la celda actual
+
+    if (selectedPiece) {
+      // Si hay una pieza seleccionada, intentamos moverla a la nueva posición
+      const newBoard = [...board];
+
+      // Mover la pieza seleccionada a la nueva celda
+      newBoard[rowIndex][colIndex] = selectedPiece;
+
+      // Limpiar la celda donde estaba la pieza
+      if (selectedCell) {
+        newBoard[selectedCell.row][selectedCell.col] = null;
+      }
+
+      // Actualizar el estado del tablero
+      setBoard(newBoard);
+
+      // Limpiar la selección
+      setSelectedPiece(null);
+      setSelectedCell(null);
+    } else if (pieceAtCell && typeof pieceAtCell === 'object') {
+      // Si no hay pieza seleccionada y hacemos clic en una pieza, seleccionamos esa pieza
+      setSelectedPiece(pieceAtCell as Piece); // Establecemos la pieza seleccionada
+      setSelectedCell({ row: rowIndex, col: colIndex }); // Establecemos la celda seleccionada
+    }
   };
 
   return (
