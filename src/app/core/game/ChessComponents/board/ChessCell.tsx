@@ -1,15 +1,26 @@
 import React from 'react';
 
 interface ChessCellProps {
-  piece: string | null | { [key: string]: any };
+  piece: string | null | Piece;  // 'piece' puede ser un string, null o un objeto de tipo Piece
   isDark: boolean;
   isSelected: boolean;
   styles: React.CSSProperties;
   onClick: () => void;
 }
 
+export interface Piece {
+  id: number;
+}
+
 const ChessCell: React.FC<ChessCellProps> = ({ piece, isDark, isSelected, styles, onClick }) => {
+  // Verificamos si piece es un objeto del tipo Piece
   const pieceContent = piece && typeof piece === 'object' ? piece.id : piece;
+
+  // Inicializamos piece_ solo si piece es de tipo Piece
+  let piece_: Piece | null = null;
+  if (piece && typeof piece === 'object' && 'id' in piece && 'hash' in piece) {
+    piece_ = { id: piece.id  };
+  }
 
   return (
     <div

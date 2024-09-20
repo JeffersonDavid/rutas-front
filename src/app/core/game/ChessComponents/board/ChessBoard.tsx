@@ -4,11 +4,12 @@ import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { ChessBoardStyles, defaultStyles } from './ChessBoardStyles';
 import { useFetchBoardData } from './useFetchBoardData';
 import ChessCell from './ChessCell';
+import { Piece } from './ChessCell';
 
 interface ChessBoardProps {
   apiUrl: string;
   fetchBoardData?: (url: string, token?: string) => Promise<{
-    board: (string | { [key: string]: any } | null)[][];
+    board: (string | Piece | null)[][];  // Aseguramos que board sea string, Piece o null
     white_player_id: number;
     black_player_id: number;
   } | null>;
@@ -22,7 +23,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 }) => {
   const { authToken, user } = useAuth();
   const userId = user.id;
-  const [board, setBoard] = useState<(string | { [key: string]: any } | null)[][] | null>(null);
+  const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
   const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
 
   // Estado para rastrear la celda seleccionada
