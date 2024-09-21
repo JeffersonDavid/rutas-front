@@ -1,6 +1,6 @@
 // boardUtils.ts
 
-import { Piece } from './ChessCell';
+import { Piece } from '../../cell/ChessCell';
 
 /**
  * Mueve una pieza en el tablero.
@@ -17,6 +17,10 @@ export const movePiece = (
   to: { row: number, col: number },
   selectedPiece: Piece | null
 ): (string | Piece | null)[][] => {
+
+    
+  console.log(from)
+  console.log(to)
   // Clonar el tablero actual para no mutar el original
   const newBoard = [...board];
 

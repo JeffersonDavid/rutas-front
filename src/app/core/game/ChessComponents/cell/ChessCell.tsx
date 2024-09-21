@@ -10,6 +10,7 @@ interface ChessCellProps {
 
 export interface Piece {
   id: number;
+  color: 'white' | 'black';  // Color de la pieza
 }
 
 const ChessCell: React.FC<ChessCellProps> = ({ piece, isDark, isSelected, styles, onClick }) => {
@@ -19,7 +20,7 @@ const ChessCell: React.FC<ChessCellProps> = ({ piece, isDark, isSelected, styles
   // Inicializamos piece_ solo si piece es de tipo Piece
   let piece_: Piece | null = null;
   if (piece && typeof piece === 'object' && 'id' in piece && 'hash' in piece) {
-    piece_ = { id: piece.id  };
+    piece_ = { id: piece.id  , color:piece.color};
   }
 
   return (

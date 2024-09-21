@@ -1,11 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
-import { ChessBoardStyles, defaultStyles } from './ChessBoardStyles';
-import { useFetchBoardData } from './useFetchBoardData';
-import ChessCell from './ChessCell';
-import { Piece } from './ChessCell';
-import { movePiece } from './boardUtils' // Importamos la función de movimiento
+import { ChessBoardStyles, defaultStyles } from './utils/ChessBoardStyles';
+import { useFetchBoardData } from './utils/useFetchBoardData';
+import ChessCell, { Piece } from '../cell/ChessCell';  // Asegúrate de que Piece está exportado correctamente desde ChessCell
+import { movePiece } from './utils/MovePiece';  // Asegúrate de que esta función existe y está correctamente definida
 
 interface ChessBoardProps {
   apiUrl: string;
@@ -24,7 +23,11 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 }) => {
   const { authToken, user } = useAuth();
   const userId = user.id;
+
+  // Estado para almacenar el tablero y los IDs de los jugadores
   const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
+  const [whitePlayerId, setWhitePlayerId] = useState<number | null>(null);  // ID del jugador blanco
+  const [blackPlayerId, setBlackPlayerId] = useState<number | null>(null);  // ID del jugador negro
   const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
 
   // Estado para rastrear la celda seleccionada (inicio)
@@ -35,9 +38,13 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
   useEffect(() => {
     const loadBoard = async () => {
+      
       const boardData = await fetchBoardData(apiUrl, authToken);
 
       if (boardData && 'white_player_id' in boardData && 'black_player_id' in boardData) {
+        setWhitePlayerId(boardData.white_player_id); // Guardamos el ID del jugador blanco en el estado
+        setBlackPlayerId(boardData.black_player_id); // Guardamos el ID del jugador negro en el estado
+
         if (boardData.white_player_id === userId) {
           setIsPlayerWhite(true);
         } else if (boardData.black_player_id === userId) {
@@ -62,6 +69,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   // Manejador de clic para seleccionar y mover una pieza
   const handleCellClick = (rowIndex: number, colIndex: number) => {
     const pieceAtCell = board[rowIndex][colIndex]; // Pieza en la celda actual
+
+    // Verificamos si el jugador actual está intentando mover sus propias piezas
+    const isPlayerTurn = (isPlayerWhite && whitePlayerId === userId) || 
+                         (!isPlayerWhite && blackPlayerId === userId);
+
+    if (!isPlayerTurn) {
+      console.log("No es tu turno.");
+      return;
+    }
 
     if (selectedPiece && selectedCell) {
       // Usamos la función movePiece para mover la pieza
