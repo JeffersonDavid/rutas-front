@@ -18,9 +18,11 @@ export const movePiece = (
   selectedPiece: Piece | null
 ): (string | Piece | null)[][] => {
 
+  console.log('Moving piece.....')
     
   console.log(from)
   console.log(to)
+  
   // Clonar el tablero actual para no mutar el original
   const newBoard = [...board];
 
