@@ -4,7 +4,7 @@ import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { ChessBoardStyles, defaultStyles } from './utils/ChessBoardStyles';
 import { useFetchBoardData } from './utils/useFetchBoardData';
 import ChessCell, { Piece } from '../cell/ChessCell';  // Asegúrate de que Piece está exportado correctamente desde ChessCell
-import { movePiece } from './utils/MovePiece';  // Asegúrate de que esta función existe y está correctamente definida
+import { useMovePiece } from './utils/useMovePiece';
 
 interface ChessBoardProps {
   apiUrl: string;
@@ -23,6 +23,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 }) => {
   const { authToken, user } = useAuth();
   const userId = user.id;
+
+  // Obtener la función movePiece desde el hook useMovePiece
+  const { movePiece } = useMovePiece(); 
 
   // Estado para almacenar el tablero y los IDs de los jugadores
   const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
@@ -80,7 +83,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     }
 
     if (selectedPiece && selectedCell) {
-      // Usamos la función movePiece para mover la pieza
+      // Usamos la función movePiece obtenida desde useMovePiece
       const newBoard = await movePiece(board, selectedCell, { row: rowIndex, col: colIndex }, selectedPiece);
 
       // Actualizamos el estado del tablero
@@ -116,7 +119,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
               isDark={(rowIndex + colIndex) % 2 === 0}
               isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
               onClick={() => handleCellClick(rowIndex, colIndex)}
-              styles={styles.cell}
+              styles={styles?.cell ?? {}}
             />
           ))
         )}
