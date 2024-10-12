@@ -67,7 +67,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   }
 
   // Manejador de clic para seleccionar y mover una pieza
-  const handleCellClick = (rowIndex: number, colIndex: number) => {
+  const handleCellClick = async (rowIndex: number, colIndex: number) => {
     const pieceAtCell = board[rowIndex][colIndex]; // Pieza en la celda actual
 
     // Verificamos si el jugador actual está intentando mover sus propias piezas
@@ -81,7 +81,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
     if (selectedPiece && selectedCell) {
       // Usamos la función movePiece para mover la pieza
-      const newBoard = movePiece(board, selectedCell, { row: rowIndex, col: colIndex }, selectedPiece);
+      const newBoard = await movePiece(board, selectedCell, { row: rowIndex, col: colIndex }, selectedPiece);
 
       // Actualizamos el estado del tablero
       setBoard(newBoard);

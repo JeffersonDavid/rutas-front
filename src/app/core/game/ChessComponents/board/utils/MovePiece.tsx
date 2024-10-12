@@ -1,6 +1,8 @@
 // boardUtils.ts
 
 import { Piece } from '../../cell/ChessCell';
+import { useFetchMovement } from './useFetchMovement';
+
 
 /**
  * Mueve una pieza en el tablero.
@@ -11,17 +13,17 @@ import { Piece } from '../../cell/ChessCell';
  * @param selectedPiece - La pieza seleccionada para mover.
  * @returns El nuevo tablero con la pieza movida.
  */
-export const movePiece = (
+export const movePiece = async (
   board: (string | Piece | null)[][],
   from: { row: number, col: number },
   to: { row: number, col: number },
   selectedPiece: Piece | null
-): (string | Piece | null)[][] => {
+): Promise<(string | Piece | null)[][]> => {
 
   console.log('Moving piece.....')
+  await new Promise((resolve) => setTimeout(resolve, 1000));
     
-  console.log(from)
-  console.log(to)
+  
   
   // Clonar el tablero actual para no mutar el original
   const newBoard = [...board];
@@ -36,3 +38,5 @@ export const movePiece = (
 
   return newBoard;
 };
+
+
