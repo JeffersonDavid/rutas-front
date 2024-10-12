@@ -1,9 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { ChessBoardStyles, defaultStyles } from './utils/ChessBoardStyles';
 import { useFetchBoardData } from './utils/useFetchBoardData';
-import ChessCell, { Piece } from '../cell/ChessCell';  // Asegúrate de que Piece está exportado correctamente desde ChessCell
+import ChessCell, { Piece } from '../cell/ChessCell';
 import { useMovePiece } from './utils/useMovePiece';
 
 interface ChessBoardProps {
@@ -22,82 +22,100 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   styles = defaultStyles,
 }) => {
   const { authToken, user } = useAuth();
-  const userId = user.id;
+  const userId = user?.id;
+  const { movePiece } = useMovePiece();
 
-  // Obtener la función movePiece desde el hook useMovePiece
-  const { movePiece } = useMovePiece(); 
+  const [gameState, setGameState] = useState<{
+    board: (string | Piece | null)[][] | null;
+    whitePlayerId: number | null;
+    blackPlayerId: number | null;
+    isPlayerWhite: boolean | null;
+  }>({
+    board: null,
+    whitePlayerId: null,
+    blackPlayerId: null,
+    isPlayerWhite: null,
+  });
 
-  // Estado para almacenar el tablero y los IDs de los jugadores
-  const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
-  const [whitePlayerId, setWhitePlayerId] = useState<number | null>(null);  // ID del jugador blanco
-  const [blackPlayerId, setBlackPlayerId] = useState<number | null>(null);  // ID del jugador negro
-  const [isPlayerWhite, setIsPlayerWhite] = useState<boolean | null>(null);
-
-  // Estado para rastrear la celda seleccionada (inicio)
-  const [selectedCell, setSelectedCell] = useState<{ row: number, col: number } | null>(null);
-
-  // Estado para rastrear si la pieza ha sido seleccionada para mover
+  const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
 
   useEffect(() => {
     const loadBoard = async () => {
-      
       const boardData = await fetchBoardData(apiUrl, authToken);
-
-      if (boardData && 'white_player_id' in boardData && 'black_player_id' in boardData) {
-        setWhitePlayerId(boardData.white_player_id); // Guardamos el ID del jugador blanco en el estado
-        setBlackPlayerId(boardData.black_player_id); // Guardamos el ID del jugador negro en el estado
-
-        if (boardData.white_player_id === userId) {
-          setIsPlayerWhite(true);
-        } else if (boardData.black_player_id === userId) {
-          setIsPlayerWhite(false);
-        }
-
-        if (boardData.black_player_id === userId) {
-          setBoard(boardData.board.reverse().map((row) => row.reverse()));
-        } else {
-          setBoard(boardData.board);
-        }
+      if (boardData && boardData.white_player_id && boardData.black_player_id) {
+        const isPlayerWhite = boardData.white_player_id === userId;
+        setGameState({
+          board: boardData.board,
+          whitePlayerId: boardData.white_player_id,
+          blackPlayerId: boardData.black_player_id,
+          isPlayerWhite,
+        });
       }
     };
-
     loadBoard();
   }, [apiUrl, authToken, fetchBoardData, userId]);
 
-  if (!board) {
+  // Memoize the handleCellClick function to prevent re-creation on every render
+  const handleCellClick = useCallback(
+    async (rowIndex: number, colIndex: number) => {
+      const isPlayerTurn =
+        (gameState.isPlayerWhite && gameState.whitePlayerId === userId) ||
+        (!gameState.isPlayerWhite && gameState.blackPlayerId === userId);
+
+      if (!isPlayerTurn) {
+        console.log('No es tu turno.');
+        return;
+      }
+
+      const pieceAtCell = gameState.board ? gameState.board[rowIndex][colIndex] : null;
+
+      if (selectedPiece && selectedCell) {
+        const newBoard = await movePiece(
+          gameState.board as (string | Piece | null)[][],
+          selectedCell,
+          { row: rowIndex, col: colIndex },
+          selectedPiece
+        );
+
+        setGameState((prev) => ({
+          ...prev,
+          board: newBoard,
+        }));
+
+        setSelectedPiece(null);
+        setSelectedCell(null);
+      } else if (pieceAtCell && typeof pieceAtCell === 'object') {
+        setSelectedPiece(pieceAtCell as Piece);
+        setSelectedCell({ row: rowIndex, col: colIndex });
+      }
+    },
+    [gameState.board, gameState.isPlayerWhite, gameState.whitePlayerId, gameState.blackPlayerId, selectedPiece, selectedCell, movePiece, userId]
+  );
+
+  // Memoize the rendered board for performance
+  const renderedBoard = useMemo(() => {
+    const boardToRender = gameState.isPlayerWhite
+      ? gameState.board
+      : gameState.board?.slice().reverse().map((row) => row.slice().reverse());
+
+    return boardToRender?.map((row, rowIndex) =>
+      row.map((piece, colIndex) => (
+        <MemoizedChessCell
+          key={`${rowIndex}-${colIndex}`}
+          piece={piece}
+          isDark={(rowIndex + colIndex) % 2 === 0}
+          isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
+          onClick={() => handleCellClick(rowIndex, colIndex)}
+          styles={styles?.cell ?? {}}
+        />
+      ))
+    );
+  }, [gameState.board, gameState.isPlayerWhite, selectedCell, styles, handleCellClick]);
+
+  if (!gameState.board) {
     return <div>Loading board...</div>;
   }
-
-  // Manejador de clic para seleccionar y mover una pieza
-  const handleCellClick = async (rowIndex: number, colIndex: number) => {
-    const pieceAtCell = board[rowIndex][colIndex]; // Pieza en la celda actual
-
-    // Verificamos si el jugador actual está intentando mover sus propias piezas
-    const isPlayerTurn = (isPlayerWhite && whitePlayerId === userId) || 
-                         (!isPlayerWhite && blackPlayerId === userId);
-
-    if (!isPlayerTurn) {
-      console.log("No es tu turno.");
-      return;
-    }
-
-    if (selectedPiece && selectedCell) {
-      // Usamos la función movePiece obtenida desde useMovePiece
-      const newBoard = await movePiece(board, selectedCell, { row: rowIndex, col: colIndex }, selectedPiece);
-
-      // Actualizamos el estado del tablero
-      setBoard(newBoard);
-
-      // Limpiar la selección
-      setSelectedPiece(null);
-      setSelectedCell(null);
-    } else if (pieceAtCell && typeof pieceAtCell === 'object') {
-      // Si no hay pieza seleccionada y hacemos clic en una pieza, seleccionamos esa pieza
-      setSelectedPiece(pieceAtCell as Piece); // Establecemos la pieza seleccionada
-      setSelectedCell({ row: rowIndex, col: colIndex }); // Establecemos la celda seleccionada
-    }
-  };
 
   return (
     <div style={{ ...defaultStyles.boardContainer, ...styles.boardContainer }}>
@@ -106,26 +124,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           ...defaultStyles.board,
           ...styles.board,
           display: 'grid',
-          gridTemplateColumns: 'repeat(8, 50px)', // 8 columnas de 50px cada una
-          gridTemplateRows: 'repeat(8, 50px)',    // 8 filas de 50px cada una
-          gap: '0px',  // Ajusta la separación entre las celdas a 0
+          gridTemplateColumns: 'repeat(8, 50px)',
+          gridTemplateRows: 'repeat(8, 50px)',
+          gap: '0px',
         }}
       >
-        {board.map((row, rowIndex) =>
-          row.map((piece, colIndex) => (
-            <ChessCell
-              key={`${rowIndex}-${colIndex}`}
-              piece={piece}
-              isDark={(rowIndex + colIndex) % 2 === 0}
-              isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-              styles={styles?.cell ?? {}}
-            />
-          ))
-        )}
+        {renderedBoard}
       </div>
     </div>
   );
 };
+
+// Memoized ChessCell component to prevent unnecessary re-renders
+const MemoizedChessCell = React.memo(ChessCell);
 
 export default ChessBoard;
