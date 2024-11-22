@@ -10,7 +10,9 @@ export const useMovePiece = () => {
     board: (string | Piece | null)[][],
     from: { row: number, col: number },
     to: { row: number, col: number },
-    selectedPiece: Piece | null
+    selectedPiece: Piece | null,
+    player_role:string,
+    player_id:number
   ): Promise<(string | Piece | null)[][]> => {
 
     const newBoard = [...board];
