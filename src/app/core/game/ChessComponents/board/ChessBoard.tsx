@@ -24,25 +24,39 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   fetchBoardData = useFetchBoardData,
   styles = defaultStyles,
 }) => {
-  const { authToken } = useAuth();
-  const { user } = useAuth();
+  const { authToken, user } = useAuth();
+  const userId = user?.id;
 
   const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
+  const [playerRole, setPlayerRole] = useState<'white' | 'black' | 'spectator' | null>(null);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
 
   useEffect(() => {
     const loadBoard = async () => {
       try {
-
         const boardData = await fetchBoardData(apiUrl, authToken);
 
         if (boardData) {
-          console.log(user)
+          const { board, white_player_id, black_player_id } = boardData;
 
-          const { board } = boardData;
+          // Determinar el rol del usuario usando una variable temporal
+          let role: 'white' | 'black' | 'spectator' = 'spectator';
+          if (userId === white_player_id) {
+            role = 'white';
+          } else if (userId === black_player_id) {
+            role = 'black';
+          }
+
+          console.log('Rol determinado:', role);
+
+          // Actualizar el estado
+          setPlayerRole(role);
           setBoard(board);
 
+          // Debug adicional
+          console.log('user', user);
+          console.log('playerRole', role);
         }
       } catch (error) {
         console.error('Error loading board:', error);
@@ -50,7 +64,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     };
 
     loadBoard();
-  }, [apiUrl, authToken, fetchBoardData]);
+  }, [apiUrl, authToken, fetchBoardData, userId]);
 
   const handleCellClick = useCallback(
     async (rowIndex: number, colIndex: number) => {
