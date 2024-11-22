@@ -12,8 +12,10 @@ export const useMovePiece = () => {
     to: { row: number, col: number },
     selectedPiece: Piece | null
   ): Promise<(string | Piece | null)[][]> => {
-    console.log('Moving piece.....');
 
+    const newBoard = [...board];
+  
+/*
     const moveBackendValidation = await useFetchMovement(from, to);
 
     // Clonar el tablero actual para no mutar el original
@@ -26,6 +28,7 @@ export const useMovePiece = () => {
       // Limpiar la celda donde estaba la pieza
       newBoard[from.row][from.col] = null;
     }
+*/
 
     return newBoard;
   };
