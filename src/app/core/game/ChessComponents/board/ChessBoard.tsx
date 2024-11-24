@@ -57,31 +57,50 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   // Maneja el clic en una celda
   const handleCellClick = useCallback(
     async (rowIndex: number, colIndex: number) => {
-      if (!board || !selectedCell || !playerRole || !userId) return;
+      if (!board || !playerRole || !userId) return;
   
+      // Si no hay una celda seleccionada, selecciona la celda actual
+      if (!selectedCell) {
+        const clickedPiece = board[rowIndex][colIndex];
+  
+        // Validar que la celda contiene una pieza y que la pieza pertenece al jugador
+        if (
+          clickedPiece &&
+          typeof clickedPiece === 'object' &&
+          clickedPiece.color === playerRole
+        ) {
+          setSelectedCell({ row: rowIndex, col: colIndex });
+        } else {
+          console.warn('No puedes seleccionar esta celda');
+        }
+        return;
+      }
+  
+      // Si hay una celda seleccionada, intenta mover la pieza
       const from = selectedCell; // Celda de origen
       const to = { row: rowIndex, col: colIndex }; // Celda de destino
       const selectedPiece = board[selectedCell.row][selectedCell.col];
   
       // Validar que la pieza seleccionada sea del tipo correcto
-      if (typeof selectedPiece !== 'object' || selectedPiece === null || !('type' in selectedPiece)) {
+      if (typeof selectedPiece !== 'object' || selectedPiece === null) {
         console.error('La celda seleccionada no contiene una pieza válida');
         return;
       }
   
       try {
         // Llamar a movePiece con todos los argumentos requeridos
-        const updatedBoard = await movePiece( board, from, to, selectedPiece, playerRole, userId );
+        const updatedBoard = await movePiece(board, from, to, selectedPiece, playerRole, userId);
   
         // Actualizar el estado del tablero y limpiar la celda seleccionada
         setBoard(updatedBoard);
-        setSelectedCell(null);
+        setSelectedCell(null); // Limpiar la selección después de mover
       } catch (error) {
         console.error('Error al mover la pieza:', error);
       }
     },
     [board, selectedCell, playerRole, userId, movePiece]
   );
+  
   
 
   // Renderiza el tablero
