@@ -1,26 +1,20 @@
-import { argv } from 'process';
 import { Piece } from '../../cell/ChessCell';
-import { useFetchMovement } from './useFetchMovement';
-import { useWebSocket } from '@/app/quick-play/hooks/useWebSocket';
+import { useWebSocketEmitter } from '@/app/quick-play/hooks/useWebSocketEmitter';
 
-/**
- * Hook personalizado para mover una pieza en el tablero.
- */
+
+
 export const useMovePiece = () => {
-  
+  const emitMessage = useWebSocketEmitter(); // Hook dentro de un hook
+
   const movePiece = async (
     board: (string | Piece | null)[][],
-    from: { row: number, col: number },
-    to: { row: number, col: number },
+    from: { row: number; col: number },
+    to: { row: number; col: number },
     selectedPiece: Piece | null,
-    player_role:string,
-    player_id:number
+    player_role: string,
+    player_id: number
   ): Promise<(string | Piece | null)[][]> => {
-
-  
-/*
-    const moveBackendValidation = await useFetchMovement(from, to);
-*/
+    emitMessage('movePiece', { from, to, player_role, player_id });
 
     // Clonar el tablero actual para no mutar el original
     const newBoard = [...board];
@@ -31,6 +25,7 @@ export const useMovePiece = () => {
       // Limpiar la celda donde estaba la pieza
       newBoard[from.row][from.col] = null;
     }
+
     return newBoard;
   };
 
