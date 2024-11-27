@@ -14,8 +14,10 @@ export const useMovePiece = () => {
     player_role: string,
     player_id: number
   ): Promise<(string | Piece | null)[][]> => {
-    emitMessage('movePiece', { from, to, player_role, player_id });
 
+    
+    emitMessage('play', { user_id : 1 });
+    console.log('pasa move piece')
     // Clonar el tablero actual para no mutar el original
     const newBoard = [...board];
 

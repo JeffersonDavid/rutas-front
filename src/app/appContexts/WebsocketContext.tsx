@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useAuth } from './Auth/AuthContext';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { io, Socket } from "socket.io-client";
+import { useAuth } from "./Auth/AuthContext";
+
+// Define una variable compartida para la conexión WebSocket
+let socketInstance: Socket | null = null;
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -13,17 +16,24 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket: Socket = io('http://localhost:4000');
+    if (!socketInstance) {
+      // Crea una nueva conexión si no existe
+      socketInstance = io("http://localhost:4000");
 
-    newSocket.on('connect', () => {
-      console.log('Connected to the WebSocket server');
-      newSocket.emit('setUserState', authToken);
-    });
+      socketInstance.on("connect", () => {
+        console.log("Conectado al WebSocket con ID V000000000000000:", socketInstance!.id);
+        socketInstance!.emit("setUserState", authToken);
+      });
 
-    setSocket(newSocket);
+    }
+
+    // Reutiliza la conexión existente
+    setSocket(socketInstance);
 
     return () => {
-      newSocket.disconnect();
+      // No desconectes la conexión compartida automáticamente
+      // Solo limpia el estado local
+      setSocket(null);
     };
   }, [authToken]);
 
@@ -37,7 +47,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 export const useWebSocket = () => {
   const context = useContext(WebSocketContext);
   if (context === undefined) {
-    throw new Error('useWebSocket must be used within a WebSocketProvider');
+    throw new Error("useWebSocket must be used within a WebSocketProvider");
   }
   return context;
 };

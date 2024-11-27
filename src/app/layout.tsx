@@ -9,6 +9,7 @@ import { WebSocketProvider } from "./appContexts/WebsocketContext";
 import VerticalNavComponent from "./components/navigation/vertical/verticalNav";
 import { useState } from 'react';
 
+import { WebSocketProvider as WebSocketProviderv1 }  from "@/app/WebSocketContextv1";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
         <body className="flex h-screen m-0 p-0 overflow-hidden">
           <LoaderProvider>
             <WebSocketProvider>
+              <WebSocketProviderv1 url="http://localhost:4000">
               <VerticalNavComponent isCollapsed={isCollapsed} toggleMenu={toggleMenu} />
               <div className={`flex-1 flex flex-col transition-all duration-300 ${isCollapsed ? 'ml-20' : 'ml-56'}`}>
                 <NavComponent isCollapsed={isCollapsed} />
@@ -37,6 +39,7 @@ export default function RootLayout({
                   {children}
                 </main>
               </div>
+              </WebSocketProviderv1>
             </WebSocketProvider>
           </LoaderProvider>
         </body>
