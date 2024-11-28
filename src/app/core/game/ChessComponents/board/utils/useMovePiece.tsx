@@ -4,6 +4,7 @@ import { useWebSocketEmitter } from '@/app/quick-play/hooks/useWebSocketEmitter'
 
 
 export const useMovePiece = () => {
+
   const emitMessage = useWebSocketEmitter(); // Hook dentro de un hook
 
   const movePiece = async (
@@ -12,12 +13,14 @@ export const useMovePiece = () => {
     to: { row: number; col: number },
     selectedPiece: Piece | null,
     player_role: string,
-    player_id: number
-  ): Promise<(string | Piece | null)[][]> => {
+    player_id: number,
+    players:(number)[]
+  ): Promise<(void)> => {
 
     
-    emitMessage('play', { user_id : 1 });
-    console.log('pasa move piece')
+    emitMessage('movePiece', { board, from, to, selectedPiece, player_role, player_id, players });
+    console.log('** movePiece ejecutado ***')
+    /*
     // Clonar el tablero actual para no mutar el original
     const newBoard = [...board];
 
@@ -27,8 +30,8 @@ export const useMovePiece = () => {
       // Limpiar la celda donde estaba la pieza
       newBoard[from.row][from.col] = null;
     }
+    */
 
-    return newBoard;
   };
 
   return { movePiece };

@@ -32,6 +32,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
   const [playerRole, setPlayerRole] = useState<'white' | 'black' | 'spectator'>('spectator');
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
+  const [players, setPlayers] =  useState<number[]>([]);
 
   // Carga el tablero y determina el rol del usuario
   useEffect(() => {
@@ -41,6 +42,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         if (!boardData) return;
 
         const { board, white_player_id, black_player_id } = boardData;
+        setPlayers([white_player_id, black_player_id])
+
         setPlayerRole(
           userId === white_player_id ? 'white' : userId === black_player_id ? 'black' : 'spectator'
         );
@@ -89,10 +92,10 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   
       try {
         // Llamar a movePiece con todos los argumentos requeridos
-        const updatedBoard = await movePiece(board, from, to, selectedPiece, playerRole, userId);
+        movePiece(board, from, to, selectedPiece, playerRole, userId, players );
   
         // Actualizar el estado del tablero y limpiar la celda seleccionada
-        setBoard(updatedBoard);
+       // setBoard(updatedBoard);
         setSelectedCell(null); // Limpiar la selección después de mover
       } catch (error) {
         console.error('Error al mover la pieza:', error);
