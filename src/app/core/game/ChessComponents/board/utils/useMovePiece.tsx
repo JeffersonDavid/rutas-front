@@ -20,17 +20,7 @@ export const useMovePiece = () => {
     
     emitMessage('movePiece', { board, from, to, selectedPiece, player_role, player_id, players });
     console.log('** movePiece ejecutado ***')
-    /*
-    // Clonar el tablero actual para no mutar el original
-    const newBoard = [...board];
-
-    if (selectedPiece) {
-      // Mover la pieza seleccionada a la nueva celda
-      newBoard[to.row][to.col] = selectedPiece;
-      // Limpiar la celda donde estaba la pieza
-      newBoard[from.row][from.col] = null;
-    }
-    */
+ 
 
   };
 
