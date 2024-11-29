@@ -68,7 +68,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     // Registrar el listener para `movePiece`
     const handleMovePiece = (nboard: (string | Piece | null)[][]) => {
       console.log('Tablero actualizado recibido:', nboard);
-      setBoard(nboard.nboard);
+      setBoard(nboard.board);
     };
 
     socket.on('movePiece', handleMovePiece);
