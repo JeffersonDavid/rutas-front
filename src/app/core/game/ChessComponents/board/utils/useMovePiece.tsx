@@ -14,7 +14,8 @@ export const useMovePiece = () => {
     selectedPiece: Piece | null,
     player_role: string,
     player_id: number,
-    players:(number)[]
+    players:(number)[],
+    turns:(number)[]
   ): Promise<(void)> => {
 
     

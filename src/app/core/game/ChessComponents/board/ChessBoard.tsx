@@ -115,7 +115,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
       try {
         // Llamar a movePiece con todos los argumentos requeridos
-        movePiece(board, from, to, selectedPiece, playerRole, userId, players);
+        movePiece(board, from, to, selectedPiece, playerRole, userId, players,turns);
 
         // Actualizar el estado del tablero y limpiar la celda seleccionada
         setSelectedCell(null); // Limpiar la selección después de mover
