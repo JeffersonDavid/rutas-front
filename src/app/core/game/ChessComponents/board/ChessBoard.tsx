@@ -35,6 +35,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   const [playerRole, setPlayerRole] = useState<'white' | 'black' | 'spectator'>('spectator');
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [players, setPlayers] = useState<number[]>([]);
+  const [turns, setTurns] = useState<number[]>([]);
 
   // Carga inicial del tablero y rol del jugador
   useEffect(() => {
