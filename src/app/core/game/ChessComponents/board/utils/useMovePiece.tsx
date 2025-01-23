@@ -15,11 +15,11 @@ export const useMovePiece = () => {
     player_role: string,
     player_id: number,
     players:(number)[],
-    turns:(number)[]
+    turns:any
   ): Promise<(void)> => {
 
     
-    emitMessage('movePiece', { board, from, to, selectedPiece, player_role, player_id, players });
+    emitMessage('movePiece', { board, from, to, selectedPiece, player_role, player_id, players, turns });
     console.log('** movePiece ejecutado ***')
  
 
