@@ -66,7 +66,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       return;
     }
 
-    // Registrar el listener para `movePiece`
     const handleMovePiece = (nboard: (string | Piece | null)[][]) => {
       console.log('Tablero actualizado recibido:', nboard);
       setBoard(nboard.board);
@@ -75,7 +74,6 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
     socket.on('movePiece', handleMovePiece);
 
-    // Cleanup: eliminar el listener al desmontar o cambiar el socket
     return () => {
       socket.off('movePiece', handleMovePiece);
     };
@@ -86,11 +84,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
     async (rowIndex: number, colIndex: number) => {
       if (!board || !playerRole || !userId) return;
 
-      // Si no hay una celda seleccionada, selecciona la celda actual
       if (!selectedCell) {
         const clickedPiece = board[rowIndex][colIndex];
 
-        // Validar que la celda contiene una pieza y que la pieza pertenece al jugador
         if (
           clickedPiece &&
           typeof clickedPiece === 'object' &&
@@ -103,23 +99,18 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         return;
       }
 
-      // Si hay una celda seleccionada, intenta mover la pieza
-      const from = selectedCell; // Celda de origen
-      const to = { row: rowIndex, col: colIndex }; // Celda de destino
+      const from = selectedCell;
+      const to = { row: rowIndex, col: colIndex };
       const selectedPiece = board[selectedCell.row][selectedCell.col];
 
-      // Validar que la pieza seleccionada sea del tipo correcto
       if (typeof selectedPiece !== 'object' || selectedPiece === null) {
         console.error('La celda seleccionada no contiene una pieza válida');
         return;
       }
 
       try {
-        // Llamar a movePiece con todos los argumentos requeridos
-        movePiece(board, from, to, selectedPiece, playerRole, userId, players,turns);
-
-        // Actualizar el estado del tablero y limpiar la celda seleccionada
-        setSelectedCell(null); // Limpiar la selección después de mover
+        movePiece(board, from, to, selectedPiece, playerRole, userId, players, turns);
+        setSelectedCell(null);
       } catch (error) {
         console.error('Error al mover la pieza:', error);
       }
@@ -137,14 +128,23 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
           isDark={(rowIndex + colIndex) % 2 === 0}
           isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
           onClick={() => handleCellClick(rowIndex, colIndex)}
-          styles={styles?.cell}
+          styles={{
+            ...styles?.cell,
+            transform: playerRole === 'black' ? 'rotate(180deg)' : undefined, // Rotar las celdas para jugador negro
+          }}
         />
       ))
     );
-  }, [board, selectedCell, styles, handleCellClick]);
+  }, [board, selectedCell, styles, handleCellClick, playerRole]);
 
   return (
-    <div style={{ ...defaultStyles.boardContainer, ...styles.boardContainer }}>
+    <div
+      style={{
+        ...defaultStyles.boardContainer,
+        ...styles.boardContainer,
+        transform: playerRole === 'black' ? 'rotate(180deg)' : undefined, // Rotar tablero completo para jugador negro
+      }}
+    >
       {board ? (
         <div
           style={{
