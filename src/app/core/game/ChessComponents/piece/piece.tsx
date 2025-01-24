@@ -1,12 +1,15 @@
 // Piece.tsx
 import React from "react";
 import { Pawn } from "./BlackPawn"; // Importa las piezas
+import { Rook } from "./Rook";
 
 // Define el mapa de las piezas disponibles como funciones que devuelven JSX
 // Define el mapa de las piezas disponibles como funciones que devuelven JSX
 const pieceSVGs: Record<string, (props: { color: string; size?: number }) => JSX.Element> = {
     "w-p": ({ color, size }) => <Pawn color={color} />, // Configura el peón blanco
     "b-p": ({ color, size }) => <Pawn color={color} />, // Configura el peón negro
+    "w-r": ({ color, size }) => <Rook color={color} />, 
+    "b-r": ({ color, size }) => <Rook color={color} />, 
     // Agrega más piezas aquí en el formato "color-tipo"
   };
 
