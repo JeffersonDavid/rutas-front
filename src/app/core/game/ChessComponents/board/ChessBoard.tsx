@@ -1,169 +1,79 @@
-'use client';
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useBoardData } from './hooks/useChessBoard';
+import { useBoardWebSocket } from './hooks/useBoardWebSocket';
+import { useCellClickHandler } from './hooks/useCellClickHandler';
+import ChessCell from '../cell/ChessCell';
+import { ChessBoardProps } from './contracts/ChessBoardProps';
+import { defaultStyles } from './hooks/ChessBoardStyles';
+import { useMovePiece } from './hooks/useMovePiece';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
-import { ChessBoardStyles, defaultStyles } from './utils/ChessBoardStyles';
-import { useFetchBoardData } from './utils/useFetchBoardData';
-import ChessCell, { Piece } from '../cell/ChessCell';
-import { useMovePiece } from './utils/useMovePiece';
-import { useWebSocket } from "@/app/WebSocketContextv1";
-
-interface ChessBoardProps {
-  apiUrl: string;
-  fetchBoardData?: (
-    url: string,
-    token?: string
-  ) => Promise<{
-    board: (string | Piece | null)[][];
-    white_player_id: number;
-    black_player_id: number;
-  } | null>;
-  styles?: ChessBoardStyles;
-}
+import { useFetchBoardData } from './hooks/useFetchBoardData';
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
   apiUrl,
   fetchBoardData = useFetchBoardData,
   styles = defaultStyles,
 }) => {
-  const { authToken, user } = useAuth();
-  const { movePiece } = useMovePiece();
-  const { socket } = useWebSocket();
-
-  const userId = user.id;
-
-  const [board, setBoard] = useState<(string | Piece | null)[][] | null>(null);
-  const [playerRole, setPlayerRole] = useState<'white' | 'black' | 'spectator'>('spectator');
+  const { board, setBoard, playerRole, players } = useBoardData(apiUrl, fetchBoardData);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
-  const [players, setPlayers] = useState<number[]>([]);
   const [turns, setTurns] = useState<{ player_id: number; player_role: string }[]>([]);
+  const { movePiece } = useMovePiece();
+  const { authToken, user } = useAuth();
+  useBoardWebSocket(setBoard, setTurns);
 
-  // Carga inicial del tablero y rol del jugador
-  useEffect(() => {
-    const loadBoard = async () => {
-      try {
-        const boardData = await fetchBoardData(apiUrl, authToken);
-        if (!boardData) return;
-
-        const { board, white_player_id, black_player_id } = boardData;
-        setPlayers([white_player_id, black_player_id]);
-
-        setPlayerRole(
-          userId === white_player_id ? 'white' : userId === black_player_id ? 'black' : 'spectator'
-        );
-        setBoard(board);
-      } catch (error) {
-        console.error('Error loading board:', error);
-      }
-    };
-
-    loadBoard();
-  }, [apiUrl, authToken, fetchBoardData, userId]);
-
-  // Listener para el evento `movePiece` en WebSocket
-  useEffect(() => {
-    if (!socket) {
-      console.warn('WebSocket no está conectado');
-      return;
-    }
-
-    const handleMovePiece = (nboard: (string | Piece | null)[][]) => {
-      console.log('Tablero actualizado recibido:', nboard);
-      setBoard(nboard.board);
-      setTurns(nboard.turns);
-    };
-
-    socket.on('movePiece', handleMovePiece);
-
-    return () => {
-      socket.off('movePiece', handleMovePiece);
-    };
-  }, [socket]);
-
-  // Maneja el clic en una celda
-  const handleCellClick = useCallback(
-    async (rowIndex: number, colIndex: number) => {
-      if (!board || !playerRole || !userId) return;
-
-      if (!selectedCell) {
-        const clickedPiece = board[rowIndex][colIndex];
-
-        if (
-          clickedPiece &&
-          typeof clickedPiece === 'object' &&
-          clickedPiece.color === playerRole
-        ) {
-          setSelectedCell({ row: rowIndex, col: colIndex });
-        } else {
-          console.warn('No puedes seleccionar esta celda');
-        }
-        return;
-      }
-
-      const from = selectedCell;
-      const to = { row: rowIndex, col: colIndex };
-      const selectedPiece = board[selectedCell.row][selectedCell.col];
-
-      if (typeof selectedPiece !== 'object' || selectedPiece === null) {
-        console.error('La celda seleccionada no contiene una pieza válida');
-        return;
-      }
-
-      try {
-        movePiece(board, from, to, selectedPiece, playerRole, userId, players, turns);
-        setSelectedCell(null);
-      } catch (error) {
-        console.error('Error al mover la pieza:', error);
-      }
-    },
-    [board, selectedCell, playerRole, userId, movePiece, players]
+  const handleCellClick = useCellClickHandler(
+    board,
+    selectedCell,
+    setSelectedCell,
+    movePiece,
+    playerRole,
+    user.id,
+    players,
+    turns
   );
 
-  // Renderiza el tablero
   const renderedBoard = useMemo(() => {
     return board?.map((row, rowIndex) =>
       row.map((piece, colIndex) => (
-        <MemoizedChessCell
+        <div
           key={`${rowIndex}-${colIndex}`}
-          piece={piece}
-          isDark={(rowIndex + colIndex) % 2 === 0}
-          isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
-          onClick={() => handleCellClick(rowIndex, colIndex)}
-          styles={{
-            ...styles?.cell,
-            transform: playerRole === 'black' ? 'rotate(180deg)' : undefined, // Rotar las celdas para jugador negro
+          style={{
+            transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar las celdas si el jugador es negro
           }}
-        />
+        >
+          <ChessCell
+            piece={piece}
+            isDark={(rowIndex + colIndex) % 2 === 0}
+            isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
+            onClick={() => handleCellClick(rowIndex, colIndex)}
+            styles={styles.cell}
+          />
+        </div>
       ))
     );
-  }, [board, selectedCell, styles, handleCellClick, playerRole]);
+  }, [board, selectedCell, handleCellClick, styles.cell, playerRole]);
+
+  if (!board) return <div>Cargando tablero...</div>;
 
   return (
     <div
       style={{
-        ...defaultStyles.boardContainer,
         ...styles.boardContainer,
-        transform: playerRole === 'black' ? 'rotate(180deg)' : undefined, // Rotar tablero completo para jugador negro
+        transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar todo el tablero para el jugador negro
       }}
     >
-      {board ? (
-        <div
-          style={{
-            ...defaultStyles.board,
-            ...styles.board,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(8, 50px)',
-            gridTemplateRows: 'repeat(8, 50px)',
-          }}
-        >
-          {renderedBoard}
-        </div>
-      ) : (
-        <div>Cargando tablero...</div>
-      )}
+      <div
+        style={{
+          ...styles.board,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(8, 50px)',
+          gridTemplateRows: 'repeat(8, 50px)',
+        }}
+      >
+        {renderedBoard}
+      </div>
     </div>
   );
 };
-
-const MemoizedChessCell = React.memo(ChessCell);
 
 export default ChessBoard;

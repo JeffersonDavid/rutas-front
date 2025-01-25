@@ -13,7 +13,7 @@ const NavComponent: React.FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => {
 
   return (
     <nav
-      className={`bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 w-full transition-all duration-300 ${
+      className={`z-99 bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 w-full transition-all duration-300 ${
         isTopBarCollapsed ? 'h-12' : 'h-16'
       }`}
     >

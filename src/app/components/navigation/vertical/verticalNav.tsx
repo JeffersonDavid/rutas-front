@@ -10,7 +10,7 @@ const VerticalNavComponent: React.FC<{ isCollapsed: boolean; toggleMenu: () => v
   const { user_is_logged, logout } = useAuth();
 
   return (
-    <nav className={`bg-gray-900 ${isCollapsed ? 'w-20' : 'w-56'} h-full py-2 px-0 flex flex-col justify-between transition-all duration-300 border-r border-gray-700`}>
+    <nav className={`z-50 bg-gray-900 ${isCollapsed ? 'w-20' : 'w-56'} h-full py-2 px-0 flex flex-col justify-between transition-all duration-300 border-r border-gray-700`}>
       <div>
         <NavHeader isCollapsed={isCollapsed} toggleMenu={toggleMenu} />
         {user_is_logged && (
