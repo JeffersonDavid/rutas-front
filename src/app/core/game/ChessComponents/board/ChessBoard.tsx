@@ -8,6 +8,7 @@ import { defaultStyles } from './hooks/ChessBoardStyles';
 import { useMovePiece } from './hooks/useMovePiece';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { useFetchBoardData } from './hooks/useFetchBoardData';
+import getPlayerByRole from './utils/utils'
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
   apiUrl,
@@ -55,23 +56,37 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
   if (!board) return <div>Cargando tablero...</div>;
 
+  // Determinar el lado de cada jugador
+  const topText = getPlayerByRole(playerRole === 'white' ? 'black' : 'white');
+  const bottomText = getPlayerByRole(playerRole === 'white' ? 'white' : 'black');
+
   return (
-    <div
-      style={{
-        ...styles.boardContainer,
-        transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar todo el tablero para el jugador negro
-      }}
-    >
+    <div className="flex flex-col items-center gap-4">
+      {/* Texto del jugador superior */}
+      <div className="text-white text-lg font-semibold">{topText }</div>
+
+      {/* Contenedor del tablero */}
       <div
+        className="tablecontainer"
         style={{
-          ...styles.board,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(8, 50px)',
-          gridTemplateRows: 'repeat(8, 50px)',
+          ...styles.boardContainer,
+          transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar todo el tablero para el jugador negro
         }}
       >
-        {renderedBoard}
+        <div
+          style={{
+            ...styles.board,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(8, 50px)',
+            gridTemplateRows: 'repeat(8, 50px)',
+          }}
+        >
+          {renderedBoard}
+        </div>
       </div>
+
+      {/* Texto del jugador inferior */}
+      <div className="text-white text-lg font-semibold">{bottomText }</div>
     </div>
   );
 };

@@ -9,7 +9,7 @@ export const defaultStyles: ChessBoardStyles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh',
+    height: '',
   },
   board: {
     display: 'grid',

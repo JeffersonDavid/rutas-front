@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
-import { useFetchBoardData } from './useFetchBoardData';
+import {  setCookie } from '../../../../../appContexts/Auth/Utils';
 import { Piece } from '../../cell/ChessCell';
 
 export const useBoardData = (apiUrl: string, fetchBoardData: any) => {
@@ -18,7 +18,18 @@ export const useBoardData = (apiUrl: string, fetchBoardData: any) => {
         if (!boardData) return;
 
         const { board, white_player_id, black_player_id } = boardData;
+
+
         setPlayers([white_player_id, black_player_id]);
+        const expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + 4);
+        setCookie('players_roles', JSON.stringify({white:white_player_id, black:black_player_id}), {
+          path: '/',
+          expires: expiryDate,
+          secure: true,
+          sameSite: 'Lax',
+        });
+
         setPlayerRole(
           userId === white_player_id ? 'white' : userId === black_player_id ? 'black' : 'spectator'
         );
