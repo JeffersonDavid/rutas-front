@@ -9,6 +9,7 @@ import { useMovePiece } from './hooks/useMovePiece';
 import { useAuth } from '@/app/appContexts/Auth/AuthContext';
 import { useFetchBoardData } from './hooks/useFetchBoardData';
 import getPlayerByRole from './utils/utils'
+import PlayerBar from './components/PlayerBar'
 
 const ChessBoard: React.FC<ChessBoardProps> = ({
   apiUrl,
@@ -57,15 +58,15 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   if (!board) return <div>Cargando tablero...</div>;
 
   // Determinar el lado de cada jugador
-  const topText = getPlayerByRole(playerRole === 'white' ? 'black' : 'white');
-  const bottomText = getPlayerByRole(playerRole === 'white' ? 'white' : 'black');
+  const top_user_id = getPlayerByRole(playerRole === 'white' ? 'black' : 'white');
+  const bottom_user_id = getPlayerByRole(playerRole === 'white' ? 'white' : 'black');
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Texto del jugador superior */}
-      <div className="text-white text-lg font-semibold">{topText }</div>
 
-      {/* Contenedor del tablero */}
+      {/* Contenedor del tablero */
+      <PlayerBar player_id={ top_user_id } />
+      }
       <div
         className="tablecontainer"
         style={{
@@ -86,7 +87,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
       </div>
 
       {/* Texto del jugador inferior */}
-      <div className="text-white text-lg font-semibold">{bottomText }</div>
+      <PlayerBar player_id={ bottom_user_id } />
     </div>
   );
 };
