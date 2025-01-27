@@ -80,9 +80,9 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <PlayerBar player_id={top_user_id} />
+      <PlayerBar player_id={top_user_id} turns={turns} />
       {renderedBoard}
-      <PlayerBar player_id={bottom_user_id} />
+      <PlayerBar player_id={bottom_user_id}  turns={turns}  />
     </div>
   );
 };

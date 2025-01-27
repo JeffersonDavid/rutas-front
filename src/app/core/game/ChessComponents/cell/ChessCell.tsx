@@ -23,7 +23,6 @@ const ChessCell: React.FC<ChessCellProps> = ({
   onClick,
 }) => {
 
-  console.log(piece)
   return (
     <div
       onClick={onClick}
@@ -40,7 +39,7 @@ const ChessCell: React.FC<ChessCellProps> = ({
       }}
     >
       {/* Renderiza la pieza si existe */}
-      {piece && <PieceComp id={piece.id} size={20} color={piece.color} />}
+      {piece && <PieceComp id={piece.id} size={20} color={piece.color} name={piece.name}/>}
     </div>
   );
 };

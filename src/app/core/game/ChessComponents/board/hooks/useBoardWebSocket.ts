@@ -17,6 +17,7 @@ export const useBoardWebSocket = (
     const handleMovePiece = (data: { board: (string | Piece | null)[][]; turns: any }) => {
       setBoard(data.board);
       setTurns(data.turns);
+      console.log(data.turns)
     };
 
     socket.on('movePiece', handleMovePiece);
