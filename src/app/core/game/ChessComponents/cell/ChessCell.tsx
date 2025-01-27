@@ -11,6 +11,7 @@ interface ChessCellProps {
 
 export interface Piece {
   id: string; // Identificador de la pieza, como "b-p" para peón negro
+  name: string;
   color: "white" | "black"; // Color de la pieza
 }
 
@@ -21,6 +22,8 @@ const ChessCell: React.FC<ChessCellProps> = ({
   styles,
   onClick,
 }) => {
+
+  console.log(piece)
   return (
     <div
       onClick={onClick}

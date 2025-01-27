@@ -43,7 +43,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
         }}
       >
         {board?.map((row, rowIndex) => (
-          <div
+          <div 
             key={`row-${rowIndex}`}
             style={{
               display: 'flex', // Cada fila es un flex container
@@ -51,7 +51,8 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
             }}
           >
             {row.map((piece, colIndex) => (
-              <div
+             
+              <div className='cellx'
                 key={`${rowIndex}-${colIndex}`}
                 onClick={() => handleCellClick(rowIndex, colIndex)}
                 style={{
@@ -59,7 +60,7 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
                   backgroundColor: (rowIndex + colIndex) % 2 === 0 ? '#ccc' : '#555',
                   cursor: 'pointer',
                 }}
-              >
+              > 
                 <ChessCell
                   piece={piece}
                   isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}

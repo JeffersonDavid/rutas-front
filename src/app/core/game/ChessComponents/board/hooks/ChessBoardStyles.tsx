@@ -9,7 +9,7 @@ export const defaultStyles: ChessBoardStyles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh', // Opcional: Mantener el tablero centrado verticalmente
+    height: '', // Opcional: Mantener el tablero centrado verticalmente
   },
   cell: {
     width: '60px', // Cambiar ancho de cada celda

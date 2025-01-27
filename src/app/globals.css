@@ -92,3 +92,7 @@ nav{
 .options-container{
   margin-right: 20% !important;
 }
+
+.cellx{
+  border: 2px solid black;
+}
