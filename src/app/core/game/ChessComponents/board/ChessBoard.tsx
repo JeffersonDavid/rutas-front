@@ -35,59 +35,53 @@ const ChessBoard: React.FC<ChessBoardProps> = ({
   );
 
   const renderedBoard = useMemo(() => {
-    return board?.map((row, rowIndex) =>
-      row.map((piece, colIndex) => (
-        <div
-          key={`${rowIndex}-${colIndex}`}
-          style={{
-            transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar las celdas si el jugador es negro
-          }}
-        >
-          <ChessCell
-            piece={piece}
-            isDark={(rowIndex + colIndex) % 2 === 0}
-            isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
-            onClick={() => handleCellClick(rowIndex, colIndex)}
-            styles={styles.cell}
-          />
-        </div>
-      ))
+    return (
+      <div
+        style={{
+          ...styles.boardContainer,
+          flexDirection: playerRole === 'black' ? 'column-reverse' : 'column', // Invierte el orden para jugador negro
+        }}
+      >
+        {board?.map((row, rowIndex) => (
+          <div
+            key={`row-${rowIndex}`}
+            style={{
+              display: 'flex', // Cada fila es un flex container
+              flexDirection: playerRole === 'black' ? 'row-reverse' : 'row', // Invierte el orden de las celdas en filas
+            }}
+          >
+            {row.map((piece, colIndex) => (
+              <div
+                key={`${rowIndex}-${colIndex}`}
+                onClick={() => handleCellClick(rowIndex, colIndex)}
+                style={{
+                  ...styles.cell,
+                  backgroundColor: (rowIndex + colIndex) % 2 === 0 ? '#ccc' : '#555',
+                  cursor: 'pointer',
+                }}
+              >
+                <ChessCell
+                  piece={piece}
+                  isSelected={selectedCell?.row === rowIndex && selectedCell?.col === colIndex}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
     );
-  }, [board, selectedCell, handleCellClick, styles.cell, playerRole]);
+  }, [board, selectedCell, handleCellClick, playerRole, styles.cell]);
 
   if (!board) return <div>Cargando tablero...</div>;
 
-  // Determinar el lado de cada jugador
   const top_user_id = getPlayerByRole(playerRole === 'white' ? 'black' : 'white');
   const bottom_user_id = getPlayerByRole(playerRole === 'white' ? 'white' : 'black');
 
   return (
     <div className="flex flex-col items-center gap-4">
-
-      {/* Contenedor del tablero */
-      <PlayerBar player_id={ top_user_id } />
-      }
-      <div
-        className="tablecontainer"
-        style={{
-          ...styles.boardContainer,
-          transform: playerRole === 'black' ? 'rotate(180deg)' : 'none', // Rotar todo el tablero para el jugador negro
-        }}
-      >
-        <div
-          style={{
-            ...styles.board,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(8, 50px)',
-            gridTemplateRows: 'repeat(8, 50px)',
-          }}
-        >
-          {renderedBoard}
-        </div>
-      </div>
-
-      {/* Texto del jugador inferior */}
-      <PlayerBar player_id={ bottom_user_id } />
+      <PlayerBar player_id={top_user_id} />
+      {renderedBoard}
+      <PlayerBar player_id={bottom_user_id} />
     </div>
   );
 };

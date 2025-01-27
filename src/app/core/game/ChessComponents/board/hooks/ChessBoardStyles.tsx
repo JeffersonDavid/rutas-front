@@ -9,23 +9,17 @@ export const defaultStyles: ChessBoardStyles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '', // Mantiene el tablero centrado verticalmente
-  },
-  board: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(8, 100px)', // Incrementa el tamaño de las celdas
-    gridTemplateRows: 'repeat(8, 100px)', // Incrementa el tamaño de las celdas
-    boxShadow: '0 0 15px rgba(0, 0, 0, 0.5)',
-    border: '5px solid #333',
+    height: '100vh', // Opcional: Mantener el tablero centrado verticalmente
   },
   cell: {
-    width: '100px', // Tamaño de las celdas más grande
-    height: '100px', // Tamaño de las celdas más grande
+    width: '60px', // Cambiar ancho de cada celda
+    height: '60px', // Cambiar alto de cada celda
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: '36px', // Ajusta el tamaño de la fuente si es necesario
+    fontSize: '36px',
     fontWeight: 'bold',
   },
 };
+
 
