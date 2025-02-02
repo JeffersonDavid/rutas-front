@@ -4,6 +4,7 @@ import { Pawn } from "./BlackPawn"; // Importa las piezas
 import { Rook } from "./Rook";
 import { Bishop } from "./Bishop";
 import { Knight } from "./Knight";
+import { King } from "./King";
 
 // Define el mapa de las piezas disponibles como funciones que devuelven JSX
 // Define el mapa de las piezas disponibles como funciones que devuelven JSX
@@ -12,6 +13,7 @@ const pieceSVGs: Record<string, (props: { color: string; size?: number }) => JSX
     "rook": ({ color, size }) => <Rook color={color} />, // Configura el peón blanco
     "bishop": ({ color, size }) => <Bishop color={color} />, // Configura el peón blanco
     "knight": ({ color, size }) => <Knight color={color} />, // Configura el peón blanco
+    "king": ({ color, size }) => <King color={color} />
     
   };
 

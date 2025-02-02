@@ -4,13 +4,13 @@ interface KnightProps {
 
 export const Knight: React.FC<KnightProps>  = ({ color }) => {
 
-  const blackPawnImage = "/images/caballon.png";
-  const whitePawnImage = "/images/caballo.png";
+  const blackKnightImage = "/images/caballon.png";
+  const whiteKnightImage = "/images/knight-w.png";
 
   if (color === "black") {
     return (
       <img
-        src={blackPawnImage}
+        src={blackKnightImage}
         alt="Black Pawn"
         style={{
           width: "100%",
@@ -23,7 +23,7 @@ export const Knight: React.FC<KnightProps>  = ({ color }) => {
   // Para el color blanco, se usa el SVG predeterminado
     return (
       <img
-        src={whitePawnImage}
+        src={whiteKnightImage}
         alt="Black Pawn"
         style={{
           width: "100%",

@@ -1,16 +1,16 @@
-interface BishopProps {
+interface KingProps {
     color: "black" | "white"; // El color de la pieza
   }
   
-  export const Bishop: React.FC<BishopProps> = ({ color }) => {
+  export const King: React.FC<KingProps> = ({ color }) => {
     // Ruta de la imagen para el color negro
-    const blackPawnImage = "/images/bishopb.png"; // Asegúrate de que esta imagen exista en `public/images`
-    const whiteBishopImage = "/images/bishop-w.png";
+    const blackKingImage = "/images/king-b.png"; // Asegúrate de que esta imagen exista en `public/images`
+    const whiteKingImage = "/images/king-w.png";
 
     if (color === "black") {
       return (
         <img
-          src={blackPawnImage}
+          src={blackKingImage}
           alt="Black Pawn"
           style={{
             width: "100%",
@@ -23,7 +23,7 @@ interface BishopProps {
     // Para el color blanco, se usa el SVG predeterminado
     return (
       <img
-        src={whiteBishopImage}
+        src={whiteKingImage}
         alt="Black Pawn"
         style={{
           width: "100%",
